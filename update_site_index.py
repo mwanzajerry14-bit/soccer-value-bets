@@ -32,7 +32,8 @@ def main() -> None:
 <title>Daily value bets</title></head>
 <body style="font-family:-apple-system,Segoe UI,Arial,sans-serif;max-width:720px;margin:40px auto;padding:0 16px">
 <h2>&#9917; Daily football value-bet reports</h2>
-<p><b>Latest:</b> <a href="{target}">{html.escape(files[-1].name if files else "none yet")}</a></p>
+<p><b>Latest:</b> <a href="{target}">{html.escape(files[-1].name if files else "none yet")}</a>
+&nbsp;|&nbsp; <b><a href="results.html">&#9989; Results &amp; prediction verification</a></b></p>
 <ul>{"".join(rows) or "<li>no reports yet</li>"}</ul>
 <p style="color:#666;font-size:12px">Probabilities are model estimates, not guarantees.
 Stake only what you can afford to lose.</p>
