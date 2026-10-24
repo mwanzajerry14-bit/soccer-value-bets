@@ -7,6 +7,12 @@ kelly_fraction: 0.25    # quarter Kelly
 max_stake_pct: 0.02     # hard cap: 2% of bankroll per bet
 value_threshold: 0.05   # only flag when (model prob - fair implied prob) >= 5%
 
+# Anti-garbage guard: drop any single-bookmaker price more than 2x the
+# market median for that selection (catches stale feed prices, exchange lay
+# offers, and typos in your manual_odds.csv). Dropped books are listed in
+# the report's notes.
+price_sanity_factor: 2.0
+
 model:
   decay_per_day: 0.004  # Dixon-Coles time decay (higher = recent matches count more)
   blend_w_dc: 0.75      # weight on Dixon-Coles; remaining weight goes to Elo (1X2 only)
@@ -22,10 +28,21 @@ odds_api:
   # You can change this to "uk,eu" to also see UK book prices (2x quota cost).
   regions: "eu"
   markets: ["h2h", "totals"]   # h2h = 1X2 for soccer, totals = O/U 2.5
+  # Exchanges whose free feed frequently contains lay offers / stale / absurd
+  # prices (case-insensitive substring match on the bookmaker title).
+  # First live run (24 Oct 2026) showed e.g. a home win quoted at 55.0 from
+  # these sources - they create phantom "value". Never stake on them blindly.
+  exclude_books: ["Betfair", "Matchbook", "Betdaq", "Smarkets"]
 
 api_football:
   enabled: true
-  use_odds: true        # fetch BTTS + Double Chance + extra 1X2/O-U prices
+  # IMPORTANT (verified 24 Oct 2026): the FREE plan only serves seasons
+  # 2022-2024 - it cannot provide CURRENT-season odds or fixtures.
+  # That means BTTS / Double Chance odds need EITHER a paid API-Football plan
+  # (then set use_odds: true) OR your data/manual_odds.csv prices.
+  # Leave false on the free plan to save its 100 req/day quota; settle.py
+  # only uses it as a fallback and gets results from football-data.co.uk first.
+  use_odds: false
   extra_bets: ["Match Winner", "Goals Over/Under", "Both Teams Score", "Double Chance"]
 
 # ---------------------------------------------------------------------
@@ -42,7 +59,11 @@ api_football:
 # ---------------------------------------------------------------------
 leagues:
   - { name: "England Premier League", fd: E0,  odds_api: soccer_epl,                    af_id: 39,  enabled: true }
-  - { name: "England Championship",   fd: E1,  odds_api: soccer_efl_championship,       af_id: 40,  enabled: true }
+  # Championship disabled 24 Oct 2026: The Odds API now returns
+  # 404 UNKNOWN_SPORT for soccer_efl_championship (key renamed upstream).
+  # Find the current key with GitHub Action "List soccer leagues", paste it
+  # here, then set enabled: true again.
+  - { name: "England Championship",   fd: E1,  odds_api: soccer_efl_championship,       af_id: 40,  enabled: false }
   - { name: "Spain La Liga",          fd: SP1, odds_api: soccer_spain_la_liga,          af_id: 140, enabled: true }
   - { name: "Italy Serie A",          fd: I1,  odds_api: soccer_italy_serie_a,          af_id: 135, enabled: true }
   - { name: "Germany Bundesliga",     fd: D1,  odds_api: soccer_germany_bundesliga,     af_id: 78,  enabled: true }

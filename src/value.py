@@ -1,6 +1,8 @@
 """Value detection: margins (overround), de-vigging, edge, Kelly stakes."""
 from __future__ import annotations
 
+import statistics
+
 
 def overround(book_odds: dict[str, float]) -> float:
     """Bookmaker margin for one market: sum(1/odds) - 1. e.g. 0.05 = 5%."""
@@ -63,6 +65,32 @@ def stake(p: float, odds: float, bankroll: float, frac: float, cap_pct: float) -
     return min(frac * kelly_fraction(p, odds), cap_pct) * bankroll
 
 
+def _drop_insane_prices(books: dict[str, dict[str, float]],
+                        factor: float | None) -> tuple[dict, list[str]]:
+    """Drop a book's whole market when ANY of its prices exceeds
+    factor x the market median for that selection (needs >= 3 books).
+
+    Guards against stale/exchange lay prices and manual CSV typos.
+    Returns (filtered_books, human-readable notes about drops).
+    """
+    notes: list[str] = []
+    if not factor or len(books) < 3:
+        return books, notes
+    sels = set().union(*[set(o) for o in books.values()])
+    bad: set[str] = set()
+    for sel in sorted(sels):
+        prices = [o[sel] for o in books.values() if sel in o]
+        if len(prices) < 3:
+            continue
+        med = statistics.median(prices)
+        for b, o in books.items():
+            if sel in o and o[sel] > med * factor:
+                bad.add(b)
+                notes.append(f"dropped bookmaker '{b}': {sel} @ {o[sel]:.2f} "
+                             f"vs market median {med:.2f} - price looks wrong")
+    return {b: o for b, o in books.items() if b not in bad}, notes
+
+
 def evaluate_market(market: str, books: dict[str, dict[str, float]],
                     model_p: dict[str, float], cfg: dict,
                     exclude_books: set[str] | None = None):
@@ -72,8 +100,10 @@ def evaluate_market(market: str, books: dict[str, dict[str, float]],
         edge = p_model - consensus_fair_prob >= value_threshold   (default 5%)
         AND expected value at the best available price > 0  (p*odds > 1).
     """
-    cons, margins = consensus_fair(books, exclude_books)
-    best = best_prices(books, exclude_books)
+    books = {b: o for b, o in books.items() if b not in (exclude_books or set())}
+    books, sanity_notes = _drop_insane_prices(books, cfg.get("price_sanity_factor"))
+    cons, margins = consensus_fair(books)
+    best = best_prices(books)
     thr = float(cfg.get("value_threshold", 0.05))
     bankroll = float(cfg.get("bankroll", 1000.0))
     kf = float(cfg.get("kelly_fraction", 0.25))
@@ -97,9 +127,10 @@ def evaluate_market(market: str, books: dict[str, dict[str, float]],
             "stake": stake(pm, price, bankroll, kf, cap) if is_value else 0.0,
         })
     summary = {
-        "n_books": len([b for b in books if b not in (exclude_books or set())]),
+        "n_books": len(books),
         "avg_margin": sum(margins.values()) / len(margins) if margins else None,
         "margins": margins,
+        "notes": sanity_notes,
     }
     return summary, rows
 

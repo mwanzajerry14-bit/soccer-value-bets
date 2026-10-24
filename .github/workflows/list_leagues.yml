@@ -1,0 +1,20 @@
+name: List soccer leagues
+
+on:
+  workflow_dispatch: {}   # manual only: Actions tab -> "List soccer leagues" -> Run workflow
+
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Print every soccer league key The Odds API currently offers
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: python list_leagues.py
+      # Read the job log: it prints sport keys like soccer_epl to paste into
+      # config.yaml (fixes renamed keys, e.g. the Championship one).

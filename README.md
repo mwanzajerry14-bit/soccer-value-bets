@@ -50,7 +50,7 @@ Edit `.env` (created from `.env.example`):
 | Variable | Get it at | Free tier | Used for |
 |---|---|---|---|
 | `ODDS_API_KEY` | https://the-odds-api.com/ (The Odds API) | ~500 requests/month | 1X2 (`h2h`) and Over/Under 2.5 (`totals`) across EU books (Pinnacle etc.) |
-| `API_FOOTBALL_KEY` | https://dashboard.api-football.com/register | 100 requests/day | BTTS + Double Chance odds, fixtures, results for settling |
+| `API_FOOTBALL_KEY` | https://dashboard.api-football.com/register | 100 requests/day, **seasons 2022-2024 only** | BTTS + Double Chance odds **(paid plan needed for the current season)**; fallback for results/settling |
 
 **Quota math** (The Odds API charges `regions × markets` units per league request):
 the 8 leagues enabled by default cost ~16 units/day ≈ 480/month — exactly the free
@@ -176,7 +176,8 @@ src/
   report.py              <- HTML + CSV report generation
   xlsx_report.py         <- Excel workbook report (3 sheets)
 data/manual_odds.csv     <- YOUR local bookmakers' prices
-.github/workflows/daily.yml
+.github/workflows/daily.yml          <- 06:30 CAT automatic run
+.github/workflows/list_leagues.yml   <- manual "List soccer leagues" run
 ```
 
 ## 8. Known limitations (read these)
@@ -209,6 +210,22 @@ data/manual_odds.csv     <- YOUR local bookmakers' prices
     (all markets come from one scoreline matrix), but correlation *across your
     bankroll* when you hold multiple simultaneous bets is not managed beyond
     the per-bet cap.
-12. This is **not financial advice**. Only stake money you can afford to lose;
+12. **Live-run lesson (first real run, 24 Oct 2026): exchange feeds quote
+    phantom prices.** EU-region exchange entries (Betfair/Matchbook-type)
+    contained absurd offers (e.g. a home win at 55.0, a draw at 21.0) that
+    simulate as huge "value" but are lay offers / stale feed artefacts - they
+    are NOT bettable bookmaker prices. These books are now excluded by default
+    (`odds_api.exclude_books`) and any single-book price >2x the market median
+    for a selection is auto-dropped (`price_sanity_factor`), with a note in the
+    report whenever that happens.
+13. **API-Football free plan covers only seasons 2022-2024** (verified
+    24 Oct 2026). On free, it cannot supply CURRENT-season BTTS / Double
+    Chance odds or fixtures - those markets then come only from your
+    `manual_odds.csv`, or enable `api_football.use_odds` on a paid plan.
+    Settlement still works on free via football-data.co.uk for the enabled
+    leagues. Also: `soccer_efl_championship` 404'd on 24 Oct 2026 (key renamed
+    upstream) - run the manual GitHub Action **"List soccer leagues"** to print
+    the current sport key, paste it into config.yaml, re-enable the league.
+14. This is **not financial advice**. Only stake money you can afford to lose;
     betting laws and taxes are your responsibility (Zambia: licensed operators
     and 18+ rules apply).

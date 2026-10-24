@@ -83,6 +83,14 @@ def build_league_events(cfg: dict, league: dict, run_date: str,
     """Merge The Odds API + API-Football + manual CSV for one league."""
     events: dict[str, dict] = {}
     unmatched: list[str] = []
+    exc = [x.lower() for x in cfg.get("odds_api", {}).get("exclude_books", [])]
+    dropped_books: set[str] = set()
+
+    def excluded(book: str) -> bool:
+        if any(x in book.lower() for x in exc):
+            dropped_books.add(book)
+            return True
+        return False
 
     def merge(ev, source):
         h, a = matcher.match(ev["home"]), matcher.match(ev["away"])
@@ -99,6 +107,8 @@ def build_league_events(cfg: dict, league: dict, run_date: str,
         if ev.get("time_utc"):
             cur["time_utc"] = ev["time_utc"]
         for b, mkts in ev["books"].items():
+            if excluded(b):
+                continue
             bb = cur["books"].setdefault(b, {})
             bb.update(mkts)
 
@@ -121,6 +131,9 @@ def build_league_events(cfg: dict, league: dict, run_date: str,
         hint = (ev.get("league_hint") or "").lower()
         if league["name"].lower() in hint or hint in league["name"].lower() or not hint:
             merge(ev, "manual")
+    for b in sorted(dropped_books):
+        unmatched.append(f"{league['name']}: bookmaker '{b}' excluded entirely "
+                         f"(config odds_api.exclude_books - exchange/bad-feed list)")
     return events, unmatched
 
 
@@ -235,6 +248,7 @@ def main() -> None:
                     model_p = pred["markets"][market]
                     summary, rows = evaluate_market(market, by_market[market], model_p,
                                                     cfg, exclude_books=set(agg_exclude))
+                    fx_row["notes"].extend(summary.get("notes", []))
                     fx_row["markets"].append({"market": market, "summary": summary, "rows": rows})
                     if not demo:
                         for r in rows:
