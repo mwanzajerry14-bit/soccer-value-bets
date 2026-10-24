@@ -102,19 +102,6 @@ class ApiFootball:
         }
 
 
-def season_covered(coverage: dict, season_year: int) -> bool:
-    """True iff the provider-confirmed coverage includes `season_year`."""
-    return any(s.get("year") == season_year for s in coverage.get("seasons", []))
-
-
-def covered_seasons_label(coverage: dict) -> str:
-    ys = sorted(s["year"] for s in coverage.get("seasons", []) if s.get("year"))
-    if not ys:
-        return "no seasons"
-    if ys == list(range(ys[0], ys[-1] + 1)):
-        return f"{ys[0]}-{ys[-1]}"
-    return ",".join(map(str, ys))
-
     def results_range(self, league_id: int, season: int, dfrom: str, dto: str) -> list[dict]:
         js = self._get("/fixtures", {"league": league_id, "season": season,
                                      "from": dfrom, "to": dto, "status": "FT"})
@@ -212,3 +199,17 @@ def covered_seasons_label(coverage: dict) -> str:
         js = self._get("/fixtures", {"league": league_id, "season": season, "date": d})
         return {f["fixture"]["id"]: (f["teams"]["home"]["name"], f["teams"]["away"]["name"])
                 for f in js.get("response", [])}
+
+
+def season_covered(coverage: dict, season_year: int) -> bool:
+    """True iff the provider-confirmed coverage includes `season_year`."""
+    return any(s.get("year") == season_year for s in coverage.get("seasons", []))
+
+
+def covered_seasons_label(coverage: dict) -> str:
+    ys = sorted(s["year"] for s in coverage.get("seasons", []) if s.get("year"))
+    if not ys:
+        return "no seasons"
+    if ys == list(range(ys[0], ys[-1] + 1)):
+        return f"{ys[0]}-{ys[-1]}"
+    return ",".join(map(str, ys))
