@@ -11,6 +11,9 @@ from . import dixon_coles as dcmod
 from .elo import Elo
 from .teamnames import LeagueMatcher
 
+# bump whenever the model math/features change (written to every prediction)
+MODEL_VERSION = "dc-elo-1.1"
+
 
 @dataclass
 class FittedModel:
@@ -47,6 +50,17 @@ class FittedModel:
             "full_history": full_hist,
             "elo": {"home": round(self.elo.r(home)), "away": round(self.elo.r(away))},
         }
+
+    def explain(self, home: str, away: str, pred: dict) -> str:
+        """Short human-readable statistical support (real numbers only)."""
+        bits = [f"model xG {pred['lambda_home']:.2f}-{pred['lambda_away']:.2f}",
+                f"Elo {pred['elo']['home']} vs {pred['elo']['away']}"]
+        fh = self.form(home, date.today()) if self.history is not None else {}
+        fa = self.form(away, date.today()) if self.history is not None else {}
+        if fh.get("played"):
+            bits.append(f"last-{fh['played']} pts {fh['pts']} v {fa.get('pts', 0)}, "
+                        f"goals {fh['gf']}:{fh['ga']} v {fa.get('gf', 0)}:{fa.get('ga', 0)}")
+        return "; ".join(bits)
 
     def form(self, team: str, before: date, n: int | None = None) -> dict:
         """Last-N form (points, goals) strictly before `before`. Display only."""

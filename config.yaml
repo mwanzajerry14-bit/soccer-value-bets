@@ -13,6 +13,10 @@ value_threshold: 0.05   # only flag when (model prob - fair implied prob) >= 5%
 # the report's notes.
 price_sanity_factor: 2.0
 
+# ---- fixture verification gates (verify-before-predict) ----
+min_books: 3            # 1X2 priced by at least this many books (soft check)
+min_completeness: 60    # never publish a prediction below this data score (%)
+
 model:
   decay_per_day: 0.004  # Dixon-Coles time decay (higher = recent matches count more)
   blend_w_dc: 0.75      # weight on Dixon-Coles; remaining weight goes to Elo (1X2 only)

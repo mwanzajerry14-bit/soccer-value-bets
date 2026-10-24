@@ -34,6 +34,16 @@ class OddsApi:
     def list_soccer_leagues(self) -> list[dict]:
         return [s for s in self._get("/sports", {}) if s.get("group") == "Soccer"]
 
+    def league_scores(self, sport_key: str, days_from: int = 3) -> list[dict]:
+        """FREE endpoint: recent results + status (completed flag, live info).
+
+        Used to suppress live/completed fixtures from 'upcoming' predictions
+        (task step 9 / section 6). Postponed/cancelled fixtures simply
+        disappear from feeds and are caught by the removed-from-feed check.
+        """
+        return self._get(f"/sports/{sport_key}/scores",
+                         {"daysFrom": days_from, "dateFormat": "iso"})
+
     def league_odds(self, sport_key: str, regions: str, markets: list[str]) -> list[dict]:
         """Returns events: {date, time_utc, home, away, books{book{market{sel:odds}}}}"""
         js = self._get(f"/sports/{sport_key}/odds", {
@@ -74,6 +84,7 @@ class OddsApi:
                 "date": ev["commence_time"][:10],
                 "time_utc": ev["commence_time"][11:16],
                 "home": home, "away": away,
+                "id": ev.get("id"),
                 "books": books, "source": "the-odds-api",
             })
         return events

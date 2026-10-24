@@ -117,6 +117,21 @@ class ApiFootball:
         write_json(cp, {"_cached_on": today, "data": data})
         return data
 
+    def fixtures_on(self, league_id: int, season: int, d: str) -> list[dict]:
+        """Second-source fixture list for cross-verification (task STEP 4).
+        NOTE: the free plan cannot serve the CURRENT season - callers must
+        catch the plan error and record 'second source unavailable'."""
+        js = self._get("/fixtures", {"league": league_id, "season": season, "date": d})
+        out = []
+        for f in js.get("response", []):
+            out.append({
+                "date": f["fixture"]["date"][:10],
+                "home": f["teams"]["home"]["name"],
+                "away": f["teams"]["away"]["name"],
+                "status": (f.get("fixture", {}).get("status") or {}).get("long", ""),
+            })
+        return out
+
     def _fixture_names(self, league_id: int, season: int, d: str) -> dict[int, tuple[str, str]]:
         js = self._get("/fixtures", {"league": league_id, "season": season, "date": d})
         return {f["fixture"]["id"]: (f["teams"]["home"]["name"], f["teams"]["away"]["name"])

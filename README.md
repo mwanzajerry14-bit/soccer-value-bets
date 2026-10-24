@@ -229,3 +229,62 @@ data/manual_odds.csv     <- YOUR local bookmakers' prices
 14. This is **not financial advice**. Only stake money you can afford to lose;
     betting laws and taxes are your responsibility (Zambia: licensed operators
     and 18+ rules apply).
+
+---
+
+## Fixture verification & trust system (added 2026-10-24)
+
+Every prediction now passes a **verify-before-publish** gate (`src/verification.py`):
+
+1. Provider fixture record required (stable `provider:event_id`; The Odds API IDs + manual/demo ids).
+2. Checks: teams present & distinct, kickoff parseable & not started, non-terminal status
+   (completed/cancelled/postponed/abandoned/removed are blocked), >=1 real 1X2 price,
+   team-mapping sanity (a team can't play twice in one day).
+3. **Duplicate control**: fixtures are keyed `date|home|away` + provider; DB uses
+   UNIQUE constraints + upserts (idempotent pipeline reruns).
+4. **Second independent source**: API-Football fixture lists are consulted when the plan
+   allows. Free plan = seasons 2022-2024 only, so on the free tier every fixture notes
+   "second source unavailable" instead of pretending. A disagreement = "requires review".
+5. **Data completeness score (0-100%)**: books priced, model history present, last-5 form
+   available, second-source confirmation, extra markets, feed freshness. Predictions are
+   withheld below `min_completeness` (default 60%) with the message
+   "Insufficient data for a reliable prediction."
+6. **Freshness guard**: fixtures that disappear from the feed get status `removed`
+   (postponed/cancelled proxy - the free feeds don't send an explicit signal, so removal
+   from the odds feed + scores feed = our honest detection) and appear in admin warnings.
+   Live/completed matches (The Odds API /scores, free) are never presented as upcoming.
+7. **Prediction snapshots** (`predictions_v2`): every published probability is stored with
+   fixture id, model version (`dc-elo-1.1@<git sha>`), sources, data completeness,
+   confidence tier, UTC generation time and the stats used (xG, Elo, last-5 form, books).
+   Snapshots are INSERT-only/settle-only job - historical inputs are never edited.
+8. **Confidence tiers** are a published rule, not an accuracy claim:
+   high = completeness>=90 + DC/Elo agreement + >=6 books; moderate = >=70 + >=3 books;
+   else low. Whether the tiers MEAN anything is measured on results.html (calibration).
+9. Timestamps stored in UTC; display in `timezone` from config (Africa/Johannesburg,
+   DST-safe via zoneinfo; SAST has no DST).
+
+### Admin & ops
+
+- **admin.html** on the site: fixtures by status, verified counts, sync log with errors
+  and quota, stale-data warnings, prediction counts by confidence, settled performance
+  by market and league.
+- Admin ACTIONS happen behind GitHub's own authentication (the real boundary on a static
+  host): Actions -> "Daily value-bet report" -> Run workflow (fresh refresh), or tick
+  **suspend_predictions** to publish no picks while data sources look unreliable.
+
+### Automated tests (tests/, CI on every push)
+
+`python -m pytest tests/ -q` - 15 tests, MOCK DATA ONLY: probability validity, de-vig,
+insane-price guard, all verification gates (invalid teams, duplicates, conflicts,
+postponed/completed, insufficient data), bet grading incl. voids, snapshot immutability,
+unique constraints, timezone conversion, secret-leak scan.
+
+### Honest gaps (explicitly NOT claimed)
+
+- Second-source verification is **informational only on free tiers** (API-Football plan
+  walls the current season); fixtures are verified by single-provider integrity rules.
+- Postponed/cancelled fixtures are detected as *vanished-from-feed*, not via an official
+  status field (both free providers lack one): treated as `removed` = predictions suppressed, review flagged.
+- No injuries/xG/external team news exists in the free inputs; confidence reflects
+  data completeness + model agreement only.
+- In-play predictions are not built; live fixtures are labelled and excluded from pre-match stats.

@@ -45,6 +45,8 @@ def _picks_table(picks: list[dict]) -> str:
     rows = []
     for i, p in enumerate(picks, 1):
         notes = "; ".join(p.get("notes", []))
+        conf = p.get("confidence") or "-"
+        cc = {"high": "#2e7d32", "moderate": "#ef6c00", "low": "#b71c1c"}.get(conf, "#555")
         rows.append(
             f"<tr class='v'><td>{i}</td><td>{esc(p['league'])}</td>"
             f"<td>{esc(p['home'])} v {esc(p['away'])}<br><span class='small'>{esc(p['date'])}"
@@ -53,20 +55,43 @@ def _picks_table(picks: list[dict]) -> str:
             f"<td>{esc(p['book'])}</td><td class='r'><b>{p['odds']:.2f}</b></td>"
             f"<td class='r'>{pct(p['p_model'])}</td><td class='r'>{pct(p['p_fair'])}</td>"
             f"<td class='r'>+{100*p['edge']:.1f}%</td><td class='r'>{100*p['ev']:.1f}%</td>"
+            f"<td style='color:{cc}'><b>{esc(conf)}</b></td>"
             f"<td class='r'>{p['stake']:.2f}</td><td class='small'>{esc(notes)}</td></tr>")
     return ("<table><tr><th>#</th><th>League</th><th>Match</th><th>Market</th><th>Selection</th>"
             "<th>Best book</th><th class='r'>Odds</th><th class='r'>Model p</th>"
             "<th class='r'>Fair implied</th><th class='r'>Edge</th><th class='r'>EV</th>"
+            "<th>Conf.</th>"
             "<th class='r'>Stake</th><th>Notes</th></tr>" + "".join(rows) + "</table>")
 
 
 def _fixtures_tables(fixtures: list[dict]) -> str:
     blocks = []
     for f in fixtures:
+        v = f.get("verify") or {}
+        badge = ("<span class='badge'>✓ VERIFIED</span>" if v.get("verified")
+                 else "<span class='badge' style='background:#c62828'>✗ NOT VERIFIED</span>")
+        meta_bits = []
+        if f.get("kickoff_local") or f.get("time_utc"):
+            meta_bits.append(f"kickoff {esc(f.get('time_utc') or '--:--')} UTC"
+                             + (f" = {esc(f['kickoff_local'])}" if f.get('kickoff_local') else ""))
+        meta_bits.append(f"status {esc(v.get('status', '?'))}")
+        if v.get("completeness") is not None:
+            meta_bits.append(f"data completeness {v['completeness']:.0f}%")
+        if v.get("confidence"):
+            cc = {"high": "#2e7d32", "moderate": "#ef6c00", "low": "#b71c1c"}.get(v["confidence"], "#555")
+            meta_bits.append(f"confidence <b style='color:{cc}'>{esc(v['confidence'])}</b>")
+        meta_bits.append(f"model {esc(f.get('model_version', ''))}")
         header = (f"<h3 style='margin:14px 0 4px'>{esc(f['league'])} — {esc(f['home'])} v {esc(f['away'])}"
-                  f"<span class='small'> · {esc(f['date'])}"
-                  f"{' · ' + esc(f['time_utc']) + ' UTC' if f.get('time_utc') else ''}"
-                  f" · xG model: {f['xg'][0]:.2f} – {f['xg'][1]:.2f}</span></h3>")
+                  f"<span class='small'> · {esc(f['date'])}{' · ' + ' · '.join(meta_bits) if meta_bits else ''}</span> {badge}</h3>")
+        # ---- verification-failed fixtures: NO prediction content shown ----
+        if f.get("failed"):
+            q = esc(f"{f['league']} {f['home']} {f['away']} {f['date']} not-verified")
+            blocks.append(f"<div class='fx' data-q='{q}'>" + header +
+                          f"<div class='warn'>⛔ <b>{esc(f['fail_reason'])}</b>."
+                          " No prediction published for this fixture (verification gate).</div></div>")
+            continue
+        header += (f"<div class='small'>model xG: {f['xg'][0]:.2f} – {f['xg'][1]:.2f}"
+                   + (f" · {esc(f['explain'])}" if f.get('explain') else "") + "</div>")
         form = f.get("form") or {}
         fh, fa = form.get("home", {}), form.get("away", {})
         form_line = ""
@@ -94,7 +119,10 @@ def _fixtures_tables(fixtures: list[dict]) -> str:
                          "<th class='r'>Edge</th><th class='r'>Book margin</th></tr>" + "".join(rows) + "</table>")
         if f.get("notes"):
             parts.append(f"<div class='small'>⚠ {'; '.join(map(esc, f['notes']))}</div>")
-        blocks.append("".join(parts))
+        v2 = f.get("verify") or {}
+        q = esc(f"{f['league']} {f['home']} {f['away']} {f['date']} "
+                f"{'verified' if v2.get('verified') else 'not-verified'} {v2.get('status','')}")
+        blocks.append(f"<div class='fx' data-q=\"{q}\">" + "".join(parts) + "</div>")
     return "".join(blocks)
 
 
@@ -119,20 +147,45 @@ def render(run: dict, picks: list[dict], fixtures: list[dict],
     return f"""<!DOCTYPE html><html><head><meta charset="utf-8">
 <title>Value bets — {esc(run['date'])}</title><style>{CSS}</style></head><body>
 <h1>⚽ Football value-bet report — {esc(run['date'])}</h1>
-<p class="small">Generated {esc(run['generated_at'])} · Model: Dixon-Coles (time-decayed) blended with Elo ·
+<p class="small">Generated {esc(run['generated_at'])} · Model: {esc(run.get('model_version','DC+Elo'))} —
+Dixon-Coles (time-decayed) blended with Elo · Fixtures verified before prediction ·
 Probabilities are estimates, not guarantees. Betting involves risk.</p>
+{''.join(f"<div class='demo'>{esc(n)}</div>" for n in run.get('notices', []))}
 {demo_banner}
 {cards}
 <h2>Value bets</h2>
 {_picks_table(picks)}
 <p class="small">Edge = model probability − consensus fair probability (each bookmaker de-vigged, then averaged).
-EV = p × best price − 1. Market margins shown per fixture below.</p>
+EV = p × best price − 1. Confidence = data-completeness + model-agreement tier (rule published in README §9 - it is
+NOT an accuracy claim; accuracy is tracked on results.html). Market margins shown per fixture below.</p>
 <h2>All fixtures — model probabilities vs market</h2>
+<div class="small" style="margin:6px 0">
+  🔎 Filter: <input id="fq" placeholder="team / league / date…" oninput="fxFilter()"
+        style="padding:4px 8px;width:260px">
+  <select id="fs" onchange="fxFilter()" style="padding:4px">
+    <option value="">all fixtures</option>
+    <option value="verified">verified only</option>
+    <option value="not-verified">not verified only</option>
+  </select>
+</div>
+<div id="fxlist">
 {_fixtures_tables(fixtures)}
+</div>
 {unmatch_block}
 <hr><p class="small">Method: bookmaker overround shown per market (avg across books); fair probabilities are
 overround-removed (proportional de-vig). Stake = quarter Kelly capped at 2% of bankroll.
-Predictions here are probabilistic estimates only — no outcome is guaranteed.</p>
+Predictions here are probabilistic estimates only — no outcome is guaranteed.
+Live result tracking & verification history: see results.html on the site.</p>
+<script>
+function fxFilter(){{
+  var q=document.getElementById('fq').value.toLowerCase();
+  var s=document.getElementById('fs').value;
+  document.querySelectorAll('#fxlist .fx').forEach(function(d){{
+    var t=d.getAttribute('data-q').toLowerCase();
+    d.style.display=(t.includes(q)&&(!s||t.includes(s)))?'':'none';
+  }});
+}}
+</script>
 </body></html>"""
 
 
