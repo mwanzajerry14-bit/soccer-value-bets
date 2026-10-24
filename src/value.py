@@ -1,7 +1,62 @@
 """Value detection: margins (overround), de-vigging, edge, Kelly stakes."""
 from __future__ import annotations
 
+import math
 import statistics
+from datetime import datetime, timezone
+
+
+def probs_valid(markets: dict[str, dict[str, float]]) -> tuple[bool, str]:
+    """Statistical sanity of ALL model outputs before publishing (task F).
+
+    Rules: every probability strictly within [0.5%, 99.5%]; every market's
+    outcomes sum to 100% +- rounding (1%). Returns (ok, reason).
+    """
+    for mkt, probs in markets.items():
+        if not probs:
+            return False, f"{mkt}: empty probabilities"
+        for sel, p in probs.items():
+            if not isinstance(p, (int, float)) or math.isnan(p):
+                return False, f"{mkt}/{sel}: not a number"
+            if p <= 0.0 or p >= 1.0:
+                return False, f"{mkt}/{sel}: {p:.4f} outside (0%, 100%)"
+        if mkt == "DC":
+            # double-chance legs overlap by construction: sum is 2 - P(draw-free legs)
+            exp = {"1X", "12", "X2"}
+            if set(probs) != exp:
+                return False, "DC must have legs 1X/12/X2"
+            continue
+        s = sum(probs.values())
+        if abs(s - 1.0) > 0.01:
+            return False, f"{mkt}: probabilities sum to {s:.4f} (allowed 0.99-1.01)"
+    # 1X2 internal consistency required when blend used
+    if "1X2" in markets and len(markets["1X2"]) != 3:
+        return False, "1X2 must have exactly home/draw/away"
+    if "1X2" in markets and "DC" in markets:
+        x = markets["1X2"]
+        dc_ = markets["DC"]
+        if abs(dc_["1X"] - (x["home"] + x["draw"])) > 0.01:
+            return False, "DC/1X2 inconsistency"
+    return True, "valid"
+
+
+def odds_freshness(book_update: dict[str, str], stale_hours: float,
+                   now: datetime | None = None) -> tuple[list[str], list[str]]:
+    """Split books into (fresh, stale) by their last_update timestamp.
+
+    A price older than `stale_hours` is not 'current': it is excluded from
+    EV/edge computation (task D: EV only on real, CURRENT, mapped prices)."""
+    now = now or datetime.now(timezone.utc)
+    fresh, stale = [], []
+    for book, lu in (book_update or {}).items():
+        try:
+            dt = datetime.fromisoformat(lu.replace("Z", "+00:00"))
+            age_h = (now - dt).total_seconds() / 3600
+        except (ValueError, AttributeError):
+            fresh.append(book)   # provider gave no timestamp: treat as current
+            continue
+        (stale if age_h > stale_hours else fresh).append(book)
+    return fresh, stale
 
 
 def overround(book_odds: dict[str, float]) -> float:

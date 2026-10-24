@@ -95,8 +95,10 @@ def main() -> None:
         e["prob"][p["selection"]] = p["p_model"]
         e["fair"][p["selection"]] = p["p_fair"]
 
+    import math
     verified = []
     brier_m, brier_f = [], []
+    ll_m, ll_f = [], []
     correct = 0
     for key, e in sorted(per_match.items(), reverse=True):
         if not e["result"]:
@@ -112,9 +114,11 @@ def main() -> None:
         outc = [1.0 if s == actual else 0.0 for s in order]
         pm = [e["prob"][s] for s in order]
         brier_m.append(sum((a - b) ** 2 for a, b in zip(pm, outc)))
+        ll_m.append(-sum(o * math.log(max(p, 1e-9)) for p, o in zip(pm, outc)))
         if len(e["fair"]) == 3:
             pf = [e["fair"][s] for s in order]
             brier_f.append(sum((a - b) ** 2 for a, b in zip(pf, outc)))
+            ll_f.append(-sum(o * math.log(max(p, 1e-9)) for p, o in zip(pf, outc)))
         verified.append({**dict(zip(["date", "league", "home", "away"], key)),
                          "top": top, "actual": actual, "ok": ok,
                          "res": f"{hg}-{ag}", "prob": e["prob"]})
@@ -137,7 +141,24 @@ def main() -> None:
              card("Top-prob correct", f"{correct/len(verified)*100:.1f}%" if verified else "n/a"),
              card("Brier model vs market",
                   f"{sum(brier_m)/len(brier_m):.4f} vs {sum(brier_f)/len(brier_f):.4f}" if brier_f else "n/a"),
+             card("Log-loss model vs market",
+                  f"{sum(ll_m)/len(ll_m):.4f} vs {sum(ll_f)/len(ll_f):.4f}" if ll_f else "n/a"),
              "</div>"]
+
+    # ---------------- performance by month (date range breakdown) --------
+    if verified:
+        bym: dict[str, list] = {}
+        for v in verified:
+            bym.setdefault(v["date"][:7], []).append(v)
+        parts.append("<h2>Prediction verification by month (out-of-sample, pre-match only)</h2>"
+                     "<table><tr><th>Month</th><th class='r'>evaluated</th>"
+                     "<th class='r'>top-prob correct</th></tr>")
+        for mth in sorted(bym, reverse=True):
+            g = bym[mth]
+            acc = sum(1 for x in g if x["ok"]) / len(g)
+            parts.append(f"<tr><td>{esc(mth)}</td><td class='r'>{len(g)}</td>"
+                         f"<td class='r'>{acc*100:.1f}%</td></tr>")
+        parts.append("</table>")
 
     # ---------------- calibration on settled picks ----------------
     if n_settled:

@@ -36,6 +36,14 @@ def match_key(date_str: str, home: str, away: str) -> str:
     return f"{date_str}|{canonical(home)}|{canonical(away)}"
 
 
+def rolling_window_dates(today: "date", days: int) -> list[str]:
+    """Rolling N-calendar-day window, dynamically computed - never hardcoded
+    (task A). `today` must already be the local date in the display timezone
+    (Africa/Lusaka)."""
+    from datetime import timedelta
+    return [(today + timedelta(days=i)).isoformat() for i in range(days)]
+
+
 def cache_path(cache_dir: pathlib.Path, name: str) -> pathlib.Path:
     cache_dir.mkdir(parents=True, exist_ok=True)
     return cache_dir / name

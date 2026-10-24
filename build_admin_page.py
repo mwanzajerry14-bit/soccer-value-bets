@@ -17,7 +17,7 @@ from datetime import datetime
 from pathlib import Path
 
 from src import db
-from src.report import CSS
+from src.report import CSS, REFRESH_URL
 
 def esc(x) -> str:
     import html as H
@@ -62,6 +62,18 @@ def main() -> None:
                  WHERE status='scheduled' AND last_seen < ?
                  AND date >= date('now') ORDER BY date""",
             (datetime.utcnow().isoformat(timespec="seconds"),)).fetchall()
+        pub = c.execute("SELECT COALESCE(prediction_status,'(none)') st, COUNT(*) n "
+                        "FROM fixtures GROUP BY prediction_status").fetchall()
+        pubsets = {r["st"]: r["n"] for r in pub}
+        afcov = []
+        try:
+            afcov = c.execute("SELECT * FROM af_coverage ORDER BY league_id").fetchall()
+        except Exception:
+            pass
+        quota_rows = c.execute(
+            """SELECT ts, quota_remaining FROM sync_log
+                WHERE source='the-odds-api' AND quota_remaining IS NOT NULL
+                ORDER BY ts DESC LIMIT 30""").fetchall()
 
     out = [f"""<!DOCTYPE html><html><head><meta charset="utf-8">
 <title>Admin</title><style>{CSS}</style></head><body>
@@ -69,8 +81,14 @@ def main() -> None:
 <p class="small">Generated {datetime.utcnow().isoformat(timespec='seconds')} UTC · read-only analytics.
 Admin actions (refresh / suspend picks) are done in GitHub &rarr; Actions with your logged-in account -
 that is the authentication boundary on this static site.</p>
+<p><a class="btn" href="{REFRESH_URL}" target="_blank">↻ Trigger refresh now (GitHub sign-in required)</a>
+<span class="small"> - tick <b>suspend_predictions</b> on the run form to pause publishing picks.</span></p>
 <div class="summary">
 {card("Fixtures tracked", fx_total)}
+{card("Published predictions", pubsets.get("published", 0))}
+{card("Withheld (insufficient data)", pubsets.get("withheld", 0))}
+{card("Verification failed", pubsets.get("failed", 0))}
+{card("Excluded by status", pubsets.get("excluded-status", 0))}
 {card("Verified", verified_n)}
 {card("Awaiting/rejected review", rejected)}
 {card("Scheduled", by_status.get("scheduled", 0))}
@@ -112,6 +130,37 @@ that is the authentication boundary on this static site.</p>
             out.append("</table>")
         else:
             out.append("<p class='small'>no settled bets yet.</p>")
+
+    # ---- API-Football subscription coverage (provider-confirmed, task B) ----
+    import json as _json
+    out.append("<h2>API-Football subscription coverage (as confirmed by provider)</h2>")
+    if afcov:
+        out.append("<table><tr><th>league id</th><th>name</th><th>seasons covered</th>"
+                   "<th>fixtures</th><th>odds</th><th>checked (UTC)</th></tr>")
+        for r in afcov:
+            seas = _json.loads(r["seasons"] or "[]")
+            ys = sorted(s.get("year") for s in seas if s.get("year"))
+            cov = _json.loads(r["coverage"] or "{}")
+            out.append(f"<tr><td>{r['league_id']}</td><td>{esc(r['name'])}</td>"
+                       f"<td>{esc(f'{ys[0]}-{ys[-1]}' if ys else 'none')}</td>"
+                       f"<td>{'✅' if cov.get('fixtures') else '❌'}</td>"
+                       f"<td>{'✅' if cov.get('odds') else '❌'}</td>"
+                       f"<td class='small'>{esc(r['fetched_at'])}</td></tr>")
+        out.append("</table>")
+    else:
+        out.append("<p class='small'>coverage not yet queried (will populate on the "
+                   "next live run; free plan typically shows seasons 2022-2024 only)</p>")
+
+    # ---- quota forecast (free plan = ~500 units/month) ----
+    if quota_rows:
+        try:
+            rem = int(float(quota_rows[0]["quota_remaining"]))
+            out.append(f"<p class='small'>Odds API quota remaining (last seen): <b>{rem}</b> "
+                       f"units / month. Guard: extended-league fetching pauses automatically "
+                       f"below the configured threshold (see config.yaml "
+                       f"<code>quota_guard_remaining</code>).</p>")
+        except (TypeError, ValueError):
+            pass
 
     out.append("<h2>Stale / vanished data warnings</h2>")
     if stale:

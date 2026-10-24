@@ -11,8 +11,9 @@ from . import dixon_coles as dcmod
 from .elo import Elo
 from .teamnames import LeagueMatcher
 
-# bump whenever the model math/features change (written to every prediction)
-MODEL_VERSION = "dc-elo-1.1"
+# bump whenever the model math/features/market coverage change
+# (written to every prediction snapshot - revisions are logged, task E)
+MODEL_VERSION = "dc-elo-1.2"
 
 
 @dataclass
@@ -35,7 +36,7 @@ class FittedModel:
         return LeagueMatcher(self.teams)
 
     def predict(self, home: str, away: str) -> dict | None:
-        """Full market probabilities for canonical team names."""
+        """Full market probabilities + predicted scoreline for canonical names."""
         lam, mu, full_hist = dcmod.expected_goals(self.dc, home, away)
         P = dcmod.score_matrix(lam, mu, self.dc["rho"], self.max_goals)
         mkts = dcmod.market_probs(P)
@@ -48,6 +49,7 @@ class FittedModel:
             "lambda_home": lam,
             "lambda_away": mu,
             "full_history": full_hist,
+            "top_score": dcmod.top_scoreline(P),
             "elo": {"home": round(self.elo.r(home)), "away": round(self.elo.r(away))},
         }
 

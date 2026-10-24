@@ -49,23 +49,28 @@ class Fixture:
 
     def __init__(self, provider: str, provider_event_id: str | None, league: str,
                  date: str, time_utc: str | None, home: str, away: str,
-                 status: str = "scheduled"):
+                 status: str = "scheduled", country: str = "",
+                 kickoff_utc: str | None = None):
         self.provider = provider
         self.provider_event_id = provider_event_id or ""
         fid_tail = self.provider_event_id or match_key(date, home, away)
         self.fid = f"{provider}:{fid_tail}"
         self.league, self.date, self.time_utc = league, date, time_utc
+        self.country = country
         self.home, self.away = home, away
         self.status = status
         self.mkey = match_key(date, home, away)
         self.books: dict = {}
         self.sources: list[str] = [provider]
+        self.kickoff_utc = kickoff_utc or (
+            f"{date}T{(time_utc or '00:00')[:5]}:00Z" if date else None)
 
     def to_row(self) -> dict:
         return {"fid": self.fid, "mkey": self.mkey, "date": self.date,
                 "time_utc": self.time_utc, "league": self.league, "home": self.home,
                 "away": self.away, "provider": self.provider,
-                "provider_event_id": self.provider_event_id, "status": self.status}
+                "provider_event_id": self.provider_event_id, "status": self.status,
+                "country": self.country, "kickoff_utc": self.kickoff_utc}
 
     def __repr__(self):
         return f"<Fixture {self.fid} {self.home} v {self.away} {self.date} [{self.status}]>"
@@ -162,3 +167,31 @@ def confidence_category(completeness: float, dc_elo_agree: bool, n_books: int) -
     if completeness >= 70 and n_books >= 3:
         return "moderate"
     return "low"
+
+
+# ---------------- the publication decision (task C/D) ----------------
+# returns (publish: bool, withheld_reason: str)
+def publication_gate(verified: bool, verification_reason: str,
+                     model_full_history: bool | None,
+                     probs_ok: bool, probs_reason: str,
+                     window_ok: bool = True) -> tuple[bool, str]:
+    """ALL conditions must hold before ANY number is published for a fixture:
+      1. fixture verified + enough data (verification verdict)
+      2. in the report window (kickoff-date check)
+      3. model trained on real history for BOTH teams - the
+         promoted/new-club heuristic prior is a FALLBACK, and a fallback is
+         never dressed up as a statistically validated model (task D/F)
+      4. probabilities pass mathematical validation (sums, bounds)
+    """
+    if not window_ok:
+        return False, "outside report window"
+    if not verified:
+        return False, verification_reason
+    if model_full_history is False:
+        return False, ("Prediction withheld - insufficient verified data: one or both "
+                       "teams have no league history in the training window "
+                       "(promoted/new club). The heuristic weak-team prior is a "
+                       "fallback and is deliberately not published as a model output.")
+    if not probs_ok:
+        return False, f"Prediction withheld - model output failed validation: {probs_reason}"
+    return True, "verified"

@@ -57,16 +57,56 @@ CREATE TABLE IF NOT EXISTS predictions_v2(
   model_version TEXT, sources TEXT, completeness REAL, confidence TEXT,
   generated_at TEXT, snapshot TEXT,
   UNIQUE(run_id, fixture_id, market, selection));
+-- API-Football subscription coverage cache (asked from the provider itself,
+-- refreshed every 24h, NOT assumed - task B "discover available seasons")
+CREATE TABLE IF NOT EXISTS af_coverage(
+  league_id INTEGER PRIMARY KEY, fetched_at TEXT, seasons TEXT,
+  coverage TEXT, name TEXT, country TEXT);
 """
 
 # columns added after initial release (ALTER migrations, idempotent)
 _COLUMN_MIGRATIONS = [("picks", "fixture_id TEXT"),
                       ("picks", "confidence TEXT"),
-                      ("picks", "completeness REAL")]
+                      ("picks", "completeness REAL"),
+                      ("fixtures", "country TEXT"),
+                      ("fixtures", "kickoff_utc TEXT"),        # full ISO timestamp
+                      ("fixtures", "prediction_status TEXT"),   # published|withheld|failed|excluded
+                      ("fixtures", "prediction_reason TEXT"),
+                      # -- prediction revision tracking (task E) --
+                      ("predictions_v2", "revision_of INTEGER"),
+                      ("predictions_v2", "status TEXT DEFAULT 'active'"),
+                      ("predictions_v2", "revision_reason TEXT")]
 
 
 def db_path() -> Path:
     return Path(os.environ.get("SVB_DB_PATH", str(_DEFAULT_DB)))
+
+
+def _migrate_pred_v2_identity(c) -> None:
+    """Task E: stable prediction identity = (fixture_id, market, selection,
+    model_version). Exactly ONE active row per identity; older duplicates are
+    marked superseded (history preserved, never deleted/overwritten)."""
+    dupes = c.execute(
+        """SELECT fixture_id, market, selection, model_version, COUNT(*) n
+             FROM predictions_v2
+            WHERE status IS NULL OR status='active'
+            GROUP BY 1,2,3,4 HAVING n>1""").fetchall()
+    for d in dupes:
+        rows = c.execute(
+            """SELECT id FROM predictions_v2
+                WHERE fixture_id=? AND market=? AND selection=? AND model_version=?
+                  AND (status IS NULL OR status='active') ORDER BY id""",
+            (d["fixture_id"], d["market"], d["selection"], d["model_version"])).fetchall()
+        keep = rows[0]["id"]
+        for r in rows[1:]:
+            c.execute("UPDATE predictions_v2 SET status='superseded', revision_of=?, "
+                      "revision_reason=COALESCE(revision_reason,'identity dedupe') WHERE id=?",
+                      (keep, r["id"]))
+    c.execute("""CREATE UNIQUE INDEX IF NOT EXISTS idx_pred_v2_active
+                   ON predictions_v2(fixture_id, market, selection, model_version)
+                   WHERE status IS NULL OR status='active'""")
+    c.execute("""CREATE UNIQUE INDEX IF NOT EXISTS idx_picks_pending
+                   ON picks(mkey, market, selection) WHERE status='pending'""")
 
 
 @contextmanager
@@ -82,6 +122,7 @@ def conn():
             except sqlite3.OperationalError as e:
                 if "duplicate column" not in str(e):
                     raise
+        _migrate_pred_v2_identity(c)
         yield c
         c.commit()
     finally:
@@ -107,6 +148,14 @@ def log_prediction(c, run_id, mkey, date, league, home, away, market, selection,
 
 
 def add_pick(c, p: dict) -> bool:
+    """Identity = (mkey, market, selection) while pending: a pick published by
+    an earlier run is REUSED, never duplicated (task E). The partial unique
+    index idx_picks_pending enforces it at the storage level too."""
+    dup = c.execute(
+        "SELECT id FROM picks WHERE mkey=? AND market=? AND selection=? AND status='pending'",
+        (p["mkey"], p["market"], p["selection"])).fetchone()
+    if dup:
+        return False
     cur = c.execute(
         """INSERT OR IGNORE INTO picks
            (run_date,date,league,mkey,home,away,market,selection,book,odds,
@@ -146,13 +195,23 @@ def upsert_fixture(c, f: dict) -> None:
     ts = datetime.utcnow().isoformat(timespec="seconds")
     c.execute(
         """INSERT INTO fixtures(fid,mkey,date,time_utc,league,home,away,provider,
-                                provider_event_id,status,first_seen,last_seen)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+                                provider_event_id,status,first_seen,last_seen,
+                                country,kickoff_utc)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
            ON CONFLICT(fid) DO UPDATE SET last_seen=excluded.last_seen,
-                 time_utc=excluded.time_utc, status=excluded.status""",
+                 time_utc=excluded.time_utc, status=excluded.status,
+                 country=COALESCE(excluded.country, fixtures.country),
+                 kickoff_utc=COALESCE(excluded.kickoff_utc, fixtures.kickoff_utc)""",
         (f["fid"], f["mkey"], f["date"], f.get("time_utc"), f["league"],
          f["home"], f["away"], f["provider"], f["provider_event_id"],
-         f.get("status", "unknown"), ts, ts))
+         f.get("status", "unknown"), ts, ts, f.get("country"), f.get("kickoff_utc")))
+
+
+def set_fixture_prediction(c, fid: str, status: str, reason: str = "") -> None:
+    """Record the publication decision (published / withheld / failed /
+    excluded-status / no-fixture-data) with its human-readable reason."""
+    c.execute("UPDATE fixtures SET prediction_status=?, prediction_reason=? WHERE fid=?",
+              (status, reason[:400], fid))
 
 
 def set_fixture_verification(c, fid: str, verified: bool, completeness: float,
@@ -179,14 +238,66 @@ def log_sync(c, source: str, endpoint: str, ok: bool, detail: str = "",
                1 if ok else 0, detail[:400], quota))
 
 
-def log_prediction_v2(c, p: dict, snapshot: dict) -> None:
+def prediction_v2_get_active(c, fixture_id: str, market: str, selection: str,
+                             model_version: str):
+    """The single active snapshot for this identity (or None)."""
+    return c.execute(
+        """SELECT * FROM predictions_v2
+            WHERE fixture_id=? AND market=? AND selection=? AND model_version=?
+              AND (status IS NULL OR status='active')""",
+        (fixture_id, market, selection, model_version)).fetchone()
+
+
+def prediction_v2_insert(c, p: dict, snapshot: dict, recalc_reason: str | None = None):
+    """Task E: reuse-or-revise.
+
+    - If an active row exists for (fixture, market, selection, version) and no
+      deliberate recalc was requested: REUSE it (returns its id) and never
+      touch its stored probability/timestamp - the pre-match view is preserved.
+    - If recalc_reason is given: supersede the old row and insert a NEW row
+      carrying revision_of + revision_reason. Both rows survive (audit trail).
+    """
     import json
-    c.execute(
-        """INSERT OR REPLACE INTO predictions_v2
+    existing = prediction_v2_get_active(c, p["fixture_id"], p["market"],
+                                        p["selection"], p["model_version"])
+    if existing is not None and not recalc_reason:
+        return existing["id"], existing["generated_at"], True
+    if existing is not None:
+        c.execute("UPDATE predictions_v2 SET status='superseded', revision_reason=? "
+                  "WHERE id=?", (recalc_reason, existing["id"]))
+    cur = c.execute(
+        """INSERT INTO predictions_v2
            (run_id,fixture_id,mkey,date,league,home,away,market,selection,p_model,p_fair,
-            model_version,sources,completeness,confidence,generated_at,snapshot)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-        (p["run_id"], p["fixture_id"], p["mkey"], p["date"], p["league"], p["home"], p["away"],
-         p["market"], p["selection"], p["p_model"], p["p_fair"], p["model_version"],
-         json.dumps(p["sources"]), p["completeness"], p["confidence"], p["generated_at"],
-         json.dumps(snapshot)))
+            model_version,sources,completeness,confidence,generated_at,snapshot,
+            revision_of,status,revision_reason)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+        (p["run_id"], p["fixture_id"], p["mkey"], p["date"], p["league"], p["home"],
+         p["away"], p["market"], p["selection"], p["p_model"], p["p_fair"],
+         p["model_version"], json.dumps(p["sources"]), p["completeness"],
+         p["confidence"], p["generated_at"], json.dumps(snapshot),
+         existing["id"] if existing is not None else None, "active", recalc_reason))
+    return cur.lastrowid, p["generated_at"], False
+
+
+def get_af_coverage(c, league_id: int, max_age_hours: int = 24):
+    import json
+    row = c.execute("SELECT * FROM af_coverage WHERE league_id=?", (league_id,)).fetchone()
+    if not row:
+        return None
+    try:
+        age_h = (datetime.utcnow() - datetime.fromisoformat(row["fetched_at"])).total_seconds() / 3600
+    except ValueError:
+        return None
+    if age_h > max_age_hours:
+        return None
+    return {"league_id": league_id, "seasons": json.loads(row["seasons"]),
+            "coverage": json.loads(row["coverage"]), "name": row["name"],
+            "country": row["country"], "fetched_at": row["fetched_at"]}
+
+
+def set_af_coverage(c, cov: dict) -> None:
+    import json
+    c.execute("INSERT OR REPLACE INTO af_coverage VALUES (?,?,?,?,?,?)",
+              (cov["league_id"], datetime.utcnow().isoformat(timespec="seconds"),
+               json.dumps(cov.get("seasons", [])), json.dumps(cov.get("coverage", {})),
+               cov.get("name", ""), cov.get("country", "")))

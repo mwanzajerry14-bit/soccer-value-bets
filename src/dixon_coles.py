@@ -102,17 +102,29 @@ def score_matrix(lam: float, mu: float, rho: float, max_goals: int = 10) -> np.n
 
 
 def market_probs(P: np.ndarray) -> dict[str, dict[str, float]]:
-    """All supported markets from a scoreline matrix."""
+    """All supported markets from a scoreline matrix.
+    1X2, O/U 1.5 / 2.5 / 3.5, BTTS, Double Chance - same underlying matrix,
+    mathematically consistent by construction."""
     home = float(np.tril(P, -1).sum())
     draw = float(np.trace(P))
     away = float(np.triu(P, 1).sum())
     gi = np.arange(P.shape[0])
     tot = gi[:, None] + gi[None, :]
-    over = float(P[tot > 2.5].sum())
+    over15 = float(P[tot > 1.5].sum())
+    over25 = float(P[tot > 2.5].sum())
+    over35 = float(P[tot > 3.5].sum())
     btts_yes = float(P[1:, 1:].sum())
     return {
         "1X2": {"home": home, "draw": draw, "away": away},
-        "OU25": {"over": over, "under": 1.0 - over},
+        "OU15": {"over": over15, "under": 1.0 - over15},
+        "OU25": {"over": over25, "under": 1.0 - over25},
+        "OU35": {"over": over35, "under": 1.0 - over35},
         "BTTS": {"yes": btts_yes, "no": 1.0 - btts_yes},
         "DC": {"1X": home + draw, "12": home + away, "X2": draw + away},
     }
+
+
+def top_scoreline(P: np.ndarray) -> tuple[int, int]:
+    """Most probable exact score (the predicted scoreline shown on cards)."""
+    h, a = np.unravel_index(int(np.argmax(P)), P.shape)
+    return int(h), int(a)

@@ -25,6 +25,36 @@ BET_MAP = {
 }
 
 
+def classify_errors(errs) -> tuple[str, str]:
+    """Classify an API-Football `errors` payload into (kind, short message).
+
+    The v3 response carries errors as a dict (or occasionally a list).
+    The short message is safe to show to users; the raw payload belongs in
+    the sync log only - never in a public report's notes column.
+    """
+    if isinstance(errs, list):
+        text = "; ".join(str(e) for e in errs)
+    else:
+        text = "; ".join(f"{k}: {v}" for k, v in errs.items())
+    low = text.lower()
+    if "free plan" in low or "do not have access to this season" in low:
+        return "plan_scope", "plan limit: this subscription cannot serve the requested season"
+    if "exceeded" in low or "limit" in low or "quota" in low:
+        return "rate_limit", "rate limit / quota reached"
+    if "parameter" in low or "invalid" in low or "wrong" in low:
+        return "bad_parameter", f"invalid parameters: {text[:120]}"
+    return "other", text[:160]
+
+
+class APIFootballError(RuntimeError):
+    """Structured provider error (kind: plan_scope / rate_limit /
+    bad_parameter / http / other)."""
+
+    def __init__(self, kind: str, message: str):
+        super().__init__(message)
+        self.kind = kind
+
+
 class ApiFootball:
     def __init__(self, key: str):
         self.headers = {"x-apisports-key": key}
@@ -33,11 +63,57 @@ class ApiFootball:
     def _get(self, path: str, params: dict) -> dict:
         r = http_get(BASE + path, params=params, headers=self.headers)
         self.remaining = r.headers.get("x-ratelimit-requests-remaining")
+        if r.status_code != 200:
+            raise APIFootballError("http", f"HTTP {r.status_code} from {path}")
         js = r.json()
         errs = js.get("errors")
         if errs:
-            raise RuntimeError(f"API-Football errors: {errs}")
+            kind, msg = classify_errors(errs)
+            raise APIFootballError(kind, msg)
         return js
+
+    # -------------------- coverage discovery (task B) --------------------
+    def league_coverage(self, league_id: int) -> dict:
+        """GET /leagues?id=... -> what this subscription ACTUALLY covers:
+        available seasons + flags for fixtures/odds/statistics.
+        We ask the provider instead of assuming (the free plan walls the
+        current season; coverage is cached 24h in the DB by the caller)."""
+        js = self._get("/leagues", {"id": league_id})
+        resp = js.get("response", [])
+        if not resp:
+            raise APIFootballError("bad_parameter",
+                                   f"league id {league_id} unknown to provider")
+        entry = resp[0]
+        seasons = []
+        for s in entry.get("seasons", []):
+            seasons.append({"year": s.get("year"), "start": s.get("start"),
+                            "end": s.get("end"), "current": bool(s.get("current"))})
+        cov = entry.get("coverage") or {}
+        return {
+            "league_id": league_id,
+            "name": (entry.get("league") or {}).get("name", ""),
+            "country": (entry.get("country") or {}).get("name", ""),
+            "seasons": seasons,
+            "coverage": {"fixtures": bool((cov.get("fixtures") or {}).get("events") or
+                                          (cov.get("fixtures") or {}).get("lineups")),
+                         "odds": bool(cov.get("odds")),
+                         "injuries": bool(cov.get("injuries")),
+                         "standings": bool(cov.get("standings"))},
+        }
+
+
+def season_covered(coverage: dict, season_year: int) -> bool:
+    """True iff the provider-confirmed coverage includes `season_year`."""
+    return any(s.get("year") == season_year for s in coverage.get("seasons", []))
+
+
+def covered_seasons_label(coverage: dict) -> str:
+    ys = sorted(s["year"] for s in coverage.get("seasons", []) if s.get("year"))
+    if not ys:
+        return "no seasons"
+    if ys == list(range(ys[0], ys[-1] + 1)):
+        return f"{ys[0]}-{ys[-1]}"
+    return ",".join(map(str, ys))
 
     def results_range(self, league_id: int, season: int, dfrom: str, dto: str) -> list[dict]:
         js = self._get("/fixtures", {"league": league_id, "season": season,

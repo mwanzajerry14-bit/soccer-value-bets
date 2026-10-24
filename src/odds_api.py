@@ -45,7 +45,8 @@ class OddsApi:
                          {"daysFrom": days_from, "dateFormat": "iso"})
 
     def league_odds(self, sport_key: str, regions: str, markets: list[str]) -> list[dict]:
-        """Returns events: {date, time_utc, home, away, books{book{market{sel:odds}}}}"""
+        """Returns events: {date, time_utc, home, away, books{book{market{sel:odds}}}}
+        plus book_update{book: newest ISO last_update} for staleness checks."""
         js = self._get(f"/sports/{sport_key}/odds", {
             "regions": regions,
             "markets": ",".join(markets),
@@ -56,9 +57,19 @@ class OddsApi:
         for ev in js:
             home, away = ev["home_team"], ev["away_team"]
             books: dict[str, dict] = {}
+            book_update: dict[str, str] = {}
             for bk in ev.get("bookmakers", []):
                 bname = bk.get("title") or bk["key"]
+                lu = bk.get("last_update") or ""
+                if lu:
+                    mlu = book_update.get(bname)
+                    if mlu is None or lu > mlu:
+                        book_update[bname] = lu
                 for mk in bk.get("markets", []):
+                    if mk.get("last_update"):
+                        mlu = book_update.get(bname)
+                        if mlu is None or mk["last_update"] > mlu:
+                            book_update[bname] = mk["last_update"]
                     if mk["key"] == "h2h":
                         d: dict[str, float] = {}
                         for oc in mk["outcomes"]:
@@ -86,5 +97,6 @@ class OddsApi:
                 "home": home, "away": away,
                 "id": ev.get("id"),
                 "books": books, "source": "the-odds-api",
+                "book_update": book_update,
             })
         return events

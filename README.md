@@ -288,3 +288,60 @@ unique constraints, timezone conversion, secret-leak scan.
 - No injuries/xG/external team news exists in the free inputs; confidence reflects
   data completeness + model agreement only.
 - In-play predictions are not built; live fixtures are labelled and excluded from pre-match stats.
+
+---
+
+## v3: 4-day window, strict publication gate, prediction identity (2026-10-24)
+
+Follow-up upgrade after review of the first verified run. Root causes fixed:
+
+- **Provider error text was rendered into report notes.** API-Football errors are now
+  classified (`plan_scope` / `rate_limit` / `bad_parameter` / `http`) into short,
+  user-safe messages; raw payloads live only in the sync log.
+- **No coverage discovery for API-Football.** The pipeline now asks the provider
+  itself (`GET /leagues?id=`) what seasons/endpoints this subscription covers
+  (cached 24 h in table `af_coverage`) and only calls an endpoint when the provider
+  CONFIRMS coverage. On the free plan (seasons 2022-2024) the cross-check is skipped
+  with an explicit reason - before, the code requested the current season blindly.
+- **Heuristic fallbacks were published as predictions.** Fixtures relying on the
+  promoted/new-team weak prior now show "Prediction withheld - insufficient verified
+  data" and no numbers at all (a fallback is not a validated model output).
+- **Pick identity was run-scoped.** Predictions/picks are now keyed by
+  (fixture_id, market, selection, model_version): repeated runs REUSE the stored
+  snapshot; deliberate recalculation (workflow input `recalc_predictions`) creates a
+  superseding revision with reason kept forever. Originals are never overwritten.
+- **Single-day reports.** The report now covers a rolling 4-calendar-day window in
+  Africa/Lusaka, computed from the actual kickoff timestamp (a 22:30 UTC kickoff is
+  tomorrow in CAT), grouped by day with Today/Tomorrow labels. Kickoffs render as
+  CAT; Lusaka has no DST (UTC+2 all year, tested).
+- **Blocked fixtures disappeared.** Live / completed / postponed / cancelled /
+  removed / vanished-from-feed fixtures are now shown in their own clearly separated
+  section, never as upcoming.
+
+### What the engine publishes per fixture card
+
+Verified badge, fixture id, country, league, kickoff (CAT), status, data
+completeness %, confidence tier (published rule, not an accuracy claim), model
+version (`dc-elo-1.2@<git sha>`), model xG, last-5 form, most likely scoreline,
+priced markets (1X2, O/U 2.5, plus manual/CSV BTTS/DC when provided) with margin
+and de-vigged fair probabilities, and model-only probability lines (O/U 1.5/3.5,
+BTTS, DC) where no current bookmaker price exists - explicitly marked "no EV".
+
+### Gate summary (publish numbers only when ALL hold)
+
+1. fixture verified (id, teams, competition, kickoff ts, status, freshness checks)
+2. completeness >= min_completeness
+3. model trained on REAL history for both teams (no heuristic fallback)
+4. probabilities mathematically valid (sums ~1.00 per market, bounds, DC-legs
+   consistency with 1X2)
+5. kickoff inside the Lusaka window and not started
+EV/edge additionally require a real, current (<= odds_stale_hours old), non-phantom
+bookmaker price; stale prices are excluded and named.
+
+### Quota economics (The Odds API free = ~500 units/month)
+
+- core leagues (E0, SP1, I1, D1, F1, N1, P1): h2h + totals => 2 units/league/run
+- extended leagues (B1, T1, SC0, G1): h2h only => 1 unit/league/run
+- /scores and /sports endpoints are free
+- ~18 units/run/day default; `quota_guard_remaining` skips extended leagues when
+  the monthly budget runs low (logged in sync log, shown on admin.html)
