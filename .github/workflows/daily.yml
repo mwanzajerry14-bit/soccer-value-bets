@@ -37,6 +37,9 @@ jobs:
           TZ: Africa/Johannesburg
         run: python settle.py --quiet || true
 
+      - name: Publish site index page (for GitHub Pages)
+        run: python update_site_index.py
+
       - name: Upload report artifact
         uses: actions/upload-artifact@v4
         with:
@@ -44,12 +47,10 @@ jobs:
           path: reports/
           retention-days: 30
 
-      - name: Commit tracking database back to repo
-        # Keeps a persistent bet history across runs. Assumes the SQLite
-        # DB in data/ IS committed to the repo (adjust .gitignore accordingly).
+      - name: Commit tracking database + reports + site page back to repo
         run: |
           git config user.name "value-bot"
           git config user.email "value-bot@users.noreply.github.com"
-          git add -f data/value_bets.db reports/ || true
+          git add -f data/value_bets.db reports/ index.html || true
           git commit -m "daily run $(date +%F)" || echo "nothing to commit"
           git push || true
