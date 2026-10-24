@@ -120,7 +120,7 @@ class Verifier:
         # second source cross-check (only when a real provider answered)
         if second_source is None:
             out.append(Check("second_source", False, False,
-                             f"unavailable: {second_source_status} (not faked)"))
+                             f"{second_source_status} (recorded, not substituted)"))
         else:
             look = {(n["date"], n["home"], n["away"]) for n in second_source}
             hit = (f.date, f.home, f.away) in look

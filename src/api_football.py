@@ -38,7 +38,7 @@ def classify_errors(errs) -> tuple[str, str]:
         text = "; ".join(f"{k}: {v}" for k, v in errs.items())
     low = text.lower()
     if "free plan" in low or "do not have access to this season" in low:
-        return "plan_scope", "plan limit: this subscription cannot serve the requested season"
+        return "plan_scope", "plan limit: subscription does not cover this endpoint/season"
     if "exceeded" in low or "limit" in low or "quota" in low:
         return "rate_limit", "rate limit / quota reached"
     if "parameter" in low or "invalid" in low or "wrong" in low:
