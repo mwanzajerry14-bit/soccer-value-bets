@@ -4,3 +4,8 @@ __pycache__/
 data/cache/
 reports/
 data/historical/*.csv
+
+# deploy helper temp files
+.gh_device_login.py
+.gh_device_token
+.git_login
