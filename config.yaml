@@ -1,0 +1,62 @@
+# =====================================================================
+# soccer-value-bets configuration
+# =====================================================================
+
+bankroll: 1000.0        # <-- set to YOUR actual betting bankroll (any currency)
+kelly_fraction: 0.25    # quarter Kelly
+max_stake_pct: 0.02     # hard cap: 2% of bankroll per bet
+value_threshold: 0.05   # only flag when (model prob - fair implied prob) >= 5%
+
+model:
+  decay_per_day: 0.004  # Dixon-Coles time decay (higher = recent matches count more)
+  blend_w_dc: 0.75      # weight on Dixon-Coles; remaining weight goes to Elo (1X2 only)
+  max_goals: 10         # scoreline grid size
+  history_seasons: 3    # seasons used to fit the model each day
+  form_last_n: 5        # shown in report (recent form display)
+
+odds_api:
+  enabled: true
+  # Benchmark region. Pinnacle/Marathon etc. give a sharp consensus.
+  # You said you bet with local books (Betway Zambia, Betpawa, ...): those
+  # aren't on any API, so put their prices in data/manual_odds.csv.
+  # You can change this to "uk,eu" to also see UK book prices (2x quota cost).
+  regions: "eu"
+  markets: ["h2h", "totals"]   # h2h = 1X2 for soccer, totals = O/U 2.5
+
+api_football:
+  enabled: true
+  use_odds: true        # fetch BTTS + Double Chance + extra 1X2/O-U prices
+  extra_bets: ["Match Winner", "Goals Over/Under", "Both Teams Score", "Double Chance"]
+
+# ---------------------------------------------------------------------
+# LEAGUES
+#   fd       = football-data.co.uk code (results + historical odds, free)
+#   odds_api = The Odds API sport key
+#   af_id    = API-Football league id
+#
+# QUOTA MATH (The Odds API free tier = ~500 request units / month):
+#   cost per league per day ~= len(regions) x len(markets)
+#   The 8 leagues enabled below: 8 x 1 x 2 = 16 units/day ~= 480/month
+#   Enabling more leagues means: fetch less often, use one market,
+#   or a paid plan. Uncomment `enabled: true` at your own quota risk.
+# ---------------------------------------------------------------------
+leagues:
+  - { name: "England Premier League", fd: E0,  odds_api: soccer_epl,                    af_id: 39,  enabled: true }
+  - { name: "England Championship",   fd: E1,  odds_api: soccer_efl_championship,       af_id: 40,  enabled: true }
+  - { name: "Spain La Liga",          fd: SP1, odds_api: soccer_spain_la_liga,          af_id: 140, enabled: true }
+  - { name: "Italy Serie A",          fd: I1,  odds_api: soccer_italy_serie_a,          af_id: 135, enabled: true }
+  - { name: "Germany Bundesliga",     fd: D1,  odds_api: soccer_germany_bundesliga,     af_id: 78,  enabled: true }
+  - { name: "France Ligue 1",         fd: F1,  odds_api: soccer_france_ligue_one,       af_id: 61,  enabled: true }
+  - { name: "Netherlands Eredivisie", fd: N1,  odds_api: soccer_netherlands_eredivisie, af_id: 88,  enabled: true }
+  - { name: "Portugal Primeira Liga", fd: P1,  odds_api: soccer_portugal_primeira_liga, af_id: 94,  enabled: true }
+  # ---- toggle on if quota allows ----
+  - { name: "Belgium Pro League",     fd: B1,  odds_api: soccer_belgium_first_div,      af_id: 144, enabled: false }
+  - { name: "Turkey Super Lig",       fd: T1,  odds_api: soccer_turkey_super_league,    af_id: 203, enabled: false }
+  - { name: "Scotland Premiership",   fd: SC0, odds_api: soccer_spl,                    af_id: 179, enabled: false }
+  - { name: "Greece Super League",    fd: G1,  odds_api: soccer_greece_super_league,    af_id: 197, enabled: false }
+  - { name: "Germany 2. Bundesliga",  fd: D2,  odds_api: soccer_germany_bundesliga2,    af_id: 79,  enabled: false }
+  - { name: "Italy Serie B",          fd: I2,  odds_api: soccer_italy_serie_b,          af_id: 136, enabled: false }
+  - { name: "Spain La Liga 2",        fd: SP2, odds_api: soccer_spain_segunda_division, af_id: 141, enabled: false }
+  - { name: "France Ligue 2",         fd: F2,  odds_api: soccer_france_ligue_two,       af_id: 62,  enabled: false }
+
+timezone: "Africa/Johannesburg"

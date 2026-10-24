@@ -1,0 +1,6 @@
+.env
+*.pyc
+__pycache__/
+data/cache/
+reports/
+data/historical/*.csv

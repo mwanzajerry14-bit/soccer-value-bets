@@ -1,0 +1,13 @@
+# Add odds from YOUR local bookmakers here (Betway Zambia, Betpawa, ...).
+# One row per selection. Fill either the quoted odds; delete example rows.
+# date        = match date YYYY-MM-DD
+# league      = any label, matched fuzzy against config league names
+# home/away   = team names as your book displays them (fuzzy-matched)
+# market      = one of: 1X2 | OU25 | BTTS | DC
+# selection   = 1X2: home/draw/away | OU25: over/under | BTTS: yes/no
+#               DC: 1X/12/X2
+# book        = your label, e.g. "Betway ZM"
+# odds        = decimal odds
+#
+# date,league,home,away,market,selection,book,odds
+# 2026-10-25,England Premier League,Arsenal,Chelsea,1X2,home,Betway ZM,2.10
