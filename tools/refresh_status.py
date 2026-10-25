@@ -10,9 +10,12 @@ admin page can always audit it.
 from __future__ import annotations
 
 import json
+import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # repo root on path
 
 from src import db
 from src.settings import api_key, load_config, load_env
