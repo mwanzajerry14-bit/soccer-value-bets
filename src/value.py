@@ -195,9 +195,10 @@ def bet_won(market: str, selection: str, hg: int, ag: int) -> bool:
     if market == "1X2":
         r = "home" if hg > ag else "draw" if hg == ag else "away"
         return selection == r
-    if market == "OU25":
-        r = "over" if hg + ag >= 3 else "under"
-        return selection == r
+    if market and market.startswith("OU"):
+        line = int(market[2:])      # OU15 -> 15 (int kills a stray "2.5" decimal form)
+        over_wins = hg + ag > line / 10.0
+        return (selection == "over") == over_wins
     if market == "BTTS":
         r = "yes" if (hg > 0 and ag > 0) else "no"
         return selection == r
@@ -209,3 +210,31 @@ def bet_won(market: str, selection: str, hg: int, ag: int) -> bool:
         if selection == "12":
             return hg != ag
     raise ValueError(f"unknown market/selection {market}/{selection}")
+
+
+def exposure_caps(picks: list[dict], bankroll: float, per_fixture_pct: float = 0.03,
+                  total_pct: float = 0.10) -> list[dict]:
+    """Correlated-exposure control (task 6): stakes stay quarter-Kelly, but
+    selections on the SAME fixture are correlated - cap their combined stake
+    at per_fixture_pct of bankroll, and the whole slate at total_pct.
+    Scales down proportionally; never scales up. Returns picks with final
+    'stake' + 'capped' note flags."""
+    by_fx: dict[str, float] = {}
+    for p in picks:
+        key = p.get("fixture_id") or p.get("mkey", "")
+        by_fx[key] = by_fx.get(key, 0.0) + p["stake"]
+    for p in picks:
+        key = p.get("fixture_id") or p.get("mkey", "")
+        total_fx = by_fx[key]
+        cap = per_fixture_pct * bankroll
+        if total_fx > cap and total_fx > 0:
+            p["stake"] = round(p["stake"] * cap / total_fx, 2)
+            p.setdefault("notes", []).append(
+                "stake scaled down: correlated same-fixture exposure cap")
+    slate = sum(p["stake"] for p in picks)
+    if slate > total_pct * bankroll and slate > 0:
+        f = total_pct * bankroll / slate
+        for p in picks:
+            p["stake"] = round(p["stake"] * f, 2)
+            p.setdefault("notes", []).append("stake scaled down: total-exposure cap")
+    return picks

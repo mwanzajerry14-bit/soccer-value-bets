@@ -25,6 +25,9 @@ from src import db
 from src.historical import load_results
 from src.settings import current_season_code, load_config
 from src.report import CSS, MKT_LABEL, SEL_LABEL
+from src.util import lusaka_today
+
+TODAY = lusaka_today()
 
 HTML_HEAD = f"""<!DOCTYPE html><html><head><meta charset="utf-8">
 <title>Results & verification</title><style>{CSS}</style></head><body>
@@ -70,11 +73,11 @@ def main() -> None:
     # results lookup for verification of predictions on ended matches
     # --------------------------------------------------------------
     fd_by_name = {l["name"]: l["fd"] for l in cfg["leagues"] if l.get("fd")}
-    cutoff = date.today() - timedelta(days=args.days)
+    cutoff = TODAY - timedelta(days=args.days)
     wanted = defaultdict(set)          # fd code -> set of dates
     for p in preds:
         d = date.fromisoformat(p["date"])
-        if d >= cutoff and d <= date.today() and p["league"] in fd_by_name:
+        if d >= cutoff and d <= TODAY and p["league"] in fd_by_name:
             wanted[fd_by_name[p["league"]]].add(p["date"])
     results: dict[tuple, tuple[int, int]] = {}
     for fd, dts in wanted.items():

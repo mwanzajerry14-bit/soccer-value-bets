@@ -345,3 +345,54 @@ bookmaker price; stale prices are excluded and named.
 - /scores and /sports endpoints are free
 - ~18 units/run/day default; `quota_guard_remaining` skips extended leagues when
   the monthly budget runs low (logged in sync log, shown on admin.html)
+
+---
+
+## v4: Over-goals strategy + live match calendar (2026-10-25)
+
+### The date system (fixed at the root)
+
+No page on this site trusts a client clock, a git commit date, or a filename for
+"today". The build pipeline stamps the real UTC time (server-side clock) into
+`data/calendar_data.json` as `generated_at_utc` plus `lusaka_today`
+(Africa/Lusaka, UTC+2, no DST). Every page anchors on that value; the calendar
+re-fetches the JSON with a cache-buster every 30 minutes and after each run, and
+shows a freshness badge (updated just now / Xh ago / STALE). Historical date-named
+reports stay permanent - new reports never delete them.
+
+### calendar.html (the live match view)
+
+Prev/next day, date picker, Today, 4-day upcoming view, past date ranges,
+mode filter (all / upcoming / live / results). Rows show kickoff in CAT,
+competition, verification status, live/completed/awaiting-result/removed states,
+final score when the provider has published it, Over 2.5/3.5 model probabilities
+and confidence for published fixtures, and published picks.
+Two automatic refresh cadences work together:
+  - daily 06:30 CAT: full pipeline (odds + predictions; uses odds quota)
+  - every 6 hours: status-refresh workflow using ONLY the free /scores endpoint
+    (zero quota burn) - live/completed status and results update promptly.
+
+### Over 2.5 / Over 3.5 strategy (documented rules)
+
+Every verified upcoming fixture gets an evidence bundle computed from REAL
+recorded results only (src/goals_analysis.py): last-5/last-10 form and venue
+splits (goals for/against, Over 2.5 & Over 3.5 counts and %, clean sheets,
+failed-to-score, opponent Elo strength, recency-weighted trend), latest-5
+head-to-head with age flags, and a team-news status (unverified on the free
+plan unless you maintain data/team_news.csv with source + timestamp - entries
+older than 72h are ignored; predicted lineups labelled unconfirmed).
+
+TABLE A (Over 2.5) and TABLE B (Over 3.5) are ranked independently by the
+published rule: confidence tier -> calibrated model probability -> data
+completeness -> evidence quality. EV is displayed but NEVER used for ranking,
+and EV only appears when a real, current, non-stale bookmaker price exists for
+that exact market. Over 3.5 rarely has prices in the free feed - fair odds
+(1/p) are shown and EV is explicitly not claimed. Add local-book prices (Betway
+Zambia, Betpawa) to data/manual_odds.csv using market OU35.
+
+### Staking (optional, conservative)
+
+Quarter-Kelly with a 2% per-bet cap, PLUS exposure caps: same-fixture combined
+stakes <= 3% of bankroll (correlated selections), whole slate <= 10%
+(configurable: max_stake_fixture_pct / max_stake_total_pct). A stake is never
+suggested merely because EV is positive - data gates come first.

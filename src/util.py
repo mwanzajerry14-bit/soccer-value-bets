@@ -60,3 +60,11 @@ def write_json(p: pathlib.Path, obj) -> None:
 
 def fmt_pct(x: float, nd: int = 1) -> str:
     return f"{100 * x:.{nd}f}%"
+
+
+def lusaka_today() -> "date":
+    """The actual current date in Africa/Lusaka derived from the UTC clock -
+    the single date source of truth across pipeline, settle, and pages."""
+    from datetime import datetime, timezone
+    from zoneinfo import ZoneInfo
+    return datetime.now(timezone.utc).astimezone(ZoneInfo("Africa/Lusaka")).date()

@@ -24,6 +24,18 @@ min_books: 3            # 1X2 priced by at least this many books (soft check)
 min_completeness: 60    # never publish a prediction below this data score (%)
 odds_stale_hours: 36    # bookmaker price older than this -> treated as stale
 
+# ---- staking exposure caps (task 6: quarter Kelly is a MAXIMUM, never an
+#      instruction; correlated selections on the same fixture share a cap) ----
+max_stake_fixture_pct: 0.03   # combined stakes on one fixture <= 3% of bankroll
+max_stake_total_pct: 0.10     # whole daily slate <= 10% of bankroll
+
+# ---- over-goals strategy (task 3/4) ----
+over_strategy:
+  markets: ["OU25", "OU35"]
+  form_windows: [5, 10]       # recent form windows (home/away splits too)
+  h2h_last: 5                 # latest head-to-head meetings shown
+  h2h_old_months: 18          # older meetings flagged "old", weighted down
+
 model:
   decay_per_day: 0.004  # Dixon-Coles time decay (higher = recent matches count more)
   blend_w_dc: 0.75      # weight on Dixon-Coles; remaining weight goes to Elo (1X2 only)

@@ -40,6 +40,7 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 
 from src import db
+from src import goals_analysis as gan
 from src.historical import load_results, seasons_back, latest_results_with_odds
 from src.model import MODEL_VERSION, fit as fit_model
 from src.settings import (REPORTS, api_key, af_season_year, current_season_code,
@@ -103,10 +104,14 @@ def parse_manual_odds(path: Path, wanted: set[str]) -> list[dict]:
         if odds <= 1.0:
             continue
         market = row["market"].strip().upper().replace(" ", "")
-        sel = (row["selection"].strip().lower() if market in ("1X2", "OU25", "BTTS")
+        sel = (row["selection"].strip().lower()
+               if market in ("1X2", "OU15", "OU25", "OU35", "BTTS")
                else row["selection"].strip().upper())
-        if market not in ("1X2", "OU25", "BTTS", "DC"):
+        if market not in ("1X2", "OU15", "OU25", "OU35", "BTTS", "DC"):
             log(f"  [manual] unknown market '{market}' -> row skipped")
+            continue
+        if market in ("OU15", "OU25", "OU35") and sel not in ("over", "under"):
+            log(f"  [manual] {market} selection must be over/under -> row skipped")
             continue
         key = (rdate, canonical(row["home"]), canonical(row["away"]))
         ev = events.setdefault(key, {
@@ -322,6 +327,8 @@ def main() -> None:
     manual_events = [] if demo else parse_manual_odds(Path("data/manual_odds.csv"),
                                                       window_set)
     all_picks, all_fixtures, unmatched_all = [], [], []
+    overA, overB = [], []                 # Over 2.5 / Over 3.5 strategy tables
+    tier_rank = {"high": 3, "moderate": 2, "low": 1}
     n_fixtures_total = 0
     counts = {"predicted": 0, "withheld": 0, "failed": 0, "blocked": 0}
     summary_extra: list[str] = []
@@ -557,6 +564,13 @@ def main() -> None:
                                               base_row["status_note"])
                     continue
 
+                # -------- over-goals EVIDENCE (task 3) - all real numbers ----
+                ev_date = date.fromisoformat(local_date)
+                ev_bundle = gan.fixture_evidence(model, hist, ev["home"], ev["away"],
+                                                 ev_date, cfg)
+                base_row["evidence"] = ev_bundle
+                base_row["evidence_quality"] = gan.evidence_quality(ev_bundle)
+
                 publish, pub_reason = publication_gate(ok_v, reason, model_ok_flag,
                                                        pok, preason, in_window)
                 if not publish:
@@ -676,19 +690,60 @@ def main() -> None:
                         "not priced by configured sources right now - shown as "
                         "model probability only, no EV: "
                         + ", ".join(mo["market"] for mo in model_only))
+
+                # ---- over-goals strategy tables (task 4): rank by tier +
+                # ---- calibrated probability + evidence, NEVER raw EV ----
+                for mkt in ("OU25", "OU35"):
+                    mo = pred["markets"].get(mkt)
+                    if not mo:
+                        continue
+                    p_over = mo["over"]
+                    price_row = None
+                    for m in base_row["markets"]:
+                        if m["market"] == mkt:
+                            for r in m["rows"]:
+                                if r["selection"] == "over":
+                                    price_row = r
+                    sup, risk = gan.supporting_risks(ev_bundle, pred, mkt)
+                    fh5, fa5 = ev_bundle["form5_home"], ev_bundle["form5_away"]
+                    sh, sa = ev_bundle["split_home"], ev_bundle["split_away"]
+                    sel_row = {
+                        "fixture": f"{ev['home']} v {ev['away']}",
+                        "league": league["name"], "country": league.get("country", ""),
+                        "kickoff_local": kick_local, "day_label": day_label,
+                        "date": local_date, "fid": fx.fid,
+                        "p": p_over, "fair_odds": round(1.0 / p_over, 2),
+                        "xg_total": round(pred["lambda_home"] + pred["lambda_away"], 2),
+                        "top_score": pred.get("top_score"),
+                        "conf": conf, "completeness": comp,
+                        "quality": base_row["evidence_quality"],
+                        "odds": (price_row["odds"] if price_row else None),
+                        "book": (price_row["book"] if price_row else None),
+                        "ev": (price_row["ev"] if price_row else None),
+                        "is_value": bool(price_row and price_row["is_value"]),
+                        "form_ev": (f"{ev['home'].title()} last {fh5.get('n',0)}: "
+                                    f"{fh5.get('over25_pct','-')}% over2.5; "
+                                    f"{ev['away'].title()} last {fa5.get('n',0)}: "
+                                    f"{fa5.get('over25_pct','-')}%") ,
+                        "venue_ev": (f"home games: {sh.get('over25_pct','-')}% over2.5 "
+                                     f"({sh.get('n',0)} matches); away games: "
+                                     f"{sa.get('over25_pct','-')}% ({sa.get('n',0)})"),
+                        "h2h_ev": (f"{ev_bundle['h2h']['n']} meetings, avg "
+                                   f"{ev_bundle['h2h']['avg_total']} goals"
+                                   if ev_bundle["h2h"]["n"] else "no recent H2H"),
+                        "news": ev_bundle["news"]["status"],
+                        "support": sup, "risks": risk,
+                        "model_version": mver,
+                    }
+                    (overA if mkt == "OU25" else overB).append(sel_row)
+
                 all_fixtures.append(base_row)
                 counts["predicted"] += 1
                 db.set_fixture_prediction(c, fx.fid, "published", "")
 
-            if demo:
-                all_picks.extend(league_picks)
-            elif not susp:
-                for p in league_picks:
-                    added = db.add_pick(c, p)
-                    all_picks.append(p)
-                    if not added:
-                        p["notes"].append("already published by an earlier run "
-                                          "(original pick kept - never duplicated)")
+            # picks now join ONE global slate; DB insertion happens after
+            # exposure caps so what is recorded == what was published
+            all_picks.extend(league_picks)
 
         log(f"  window fixtures: {counts} | value bets so far: {len(league_picks)}"
             + (" (SUSPEND mode: not recorded)" if susp else ""))
@@ -703,8 +758,27 @@ def main() -> None:
     all_picks.sort(key=lambda p: p["edge"], reverse=True)
     for i, p in enumerate(all_picks):
         p["rank"] = i + 1
+    if not demo and all_picks:
+        from src.value import exposure_caps
+        all_picks = exposure_caps(all_picks, float(cfg["bankroll"]),
+                                  float(cfg.get("max_stake_fixture_pct", 0.03)),
+                                  float(cfg.get("max_stake_total_pct", 0.10)))
+
+    # --- over-goals ranking (documented rule; EV is shown but NEVER sorts) ---
+    for tab in (overA, overB):
+        tab.sort(key=lambda r: (tier_rank.get(r["conf"], 0), r["p"],
+                                r["completeness"], r["quality"]), reverse=True)
+        for i, r in enumerate(tab):
+            r["rank"] = i + 1
 
     with db.conn() as c:
+        if not demo and not susp:
+            for p in all_picks:
+                added = db.add_pick(c, p)
+                if not added:
+                    p.setdefault("notes", []).append(
+                        "already published by an earlier run "
+                        "(original pick kept - never duplicated)")
         db.log_run(c, run_id, n_fixtures_total, 0 if demo else len(all_picks),
                    meta=("DEMO " + args.demo) if demo else
                         f"live; model={mver}; window={window_days}d"
@@ -721,7 +795,8 @@ def main() -> None:
                 "threshold": cfg["value_threshold"], "bankroll": cfg["bankroll"],
                 "n_fixtures": n_fixtures_total, "model_version": mver,
                 "window_dates": window_dates, "timezone": "Africa/Lusaka (CAT)",
-                "counts": counts, "suspended": susp, "notices": summary_extra}
+                "counts": counts, "suspended": susp, "notices": summary_extra,
+                "over_tables": {"A": overA, "B": overB}}
     html_path.write_text(render(run_info, all_picks, all_fixtures, unmatched_all,
                                 demo=demo))
     write_picks_csv(all_picks, csv_path)

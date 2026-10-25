@@ -124,6 +124,69 @@ def _market_table(m: dict) -> str:
             "<th class='r'>Edge</th><th class='r'>Book margin</th></tr>" + "".join(rows) + "</table>")
 
 
+def _evidence_html(ev: dict) -> str:
+    """VERIFIED FACTS section: recent form, venue splits, H2H, team-news
+    status - every number from real recorded match data."""
+    out = ["<div style='background:#f6f8ee;border:1px solid #e0e6c8;border-radius:6px;"
+           "padding:8px 12px;margin:8px 0'>",
+           "<b>VERIFIED FACTS</b> <span class='small'>(real recorded results; "
+           "sources: provider feed + football-data.co.uk results)</span>"]
+
+    def frow(lbl, a):
+        if not a or not a.get("n"):
+            return ""
+        sample = " ⚠ small sample" if a.get("small_sample") else ""
+        return (f"<tr><td>{esc(lbl)}</td><td class='r'>{a['n']}</td>"
+                f"<td class='r'>{a['avg_gf']:.2f} / {a['avg_ga']:.2f}</td>"
+                f"<td class='r'>{a['over25_n']} ({a['over25_pct']}%)</td>"
+                f"<td class='r'>{a['over35_n']} ({a['over35_pct']}%)</td>"
+                f"<td class='r'>{a['clean_sheets']}</td><td class='r'>{a['failed_to_score']}</td>"
+                f"<td class='r'>{('Elo ' + str(a['opp_mean_elo'])) if a.get('opp_mean_elo') else '-'}"
+                f"</td><td class='small'>{esc(sample)}</td></tr>")
+
+    out.append("<table><tr><th>Recent form / home-away record</th><th class='r'>n</th>"
+               "<th class='r'>avg GF / GA</th><th class='r'>Over 2.5</th>"
+               "<th class='r'>Over 3.5</th><th class='r'>clean sheets</th>"
+               "<th class='r'>failed to score</th><th class='r'>opponent strength</th>"
+               "<th>sample</th></tr>")
+    for lbl, key in (("Home team - last 5 overall", "form5_home"),
+                     ("Home team - last 10 overall", "form10_home"),
+                     ("Home team - last 5 at home", "split_home"),
+                     ("Home team - last 10 at home", "split10_home"),
+                     ("Away team - last 5 overall", "form5_away"),
+                     ("Away team - last 10 overall", "form10_away"),
+                     ("Away team - last 5 away", "split_away"),
+                     ("Away team - last 10 away", "split10_away")):
+        out.append(frow(lbl, ev.get(key)))
+    out.append("</table>")
+    out.append(f"<div class='small'>Recency-weighted trend (decay): "
+               f"home trend GF/GA {ev['form5_home'].get('trend_gf','-')}/{ev['form5_home'].get('trend_ga','-')}"
+               f" · away {ev['form5_away'].get('trend_gf','-')}/{ev['form5_away'].get('trend_ga','-')}</div>")
+    h2h = ev.get("h2h") or {}
+    if h2h.get("n"):
+        legs = "; ".join(f"{g['date']}: {g['match']} "
+                         f"({'O2.5' if g['over25'] else 'U2.5'}{' O3.5' if g['over35'] else ''}"
+                         f"{', old>' + '18m' if g['old'] else ''})" for g in h2h["games"])
+        out.append(f"<div class='small'><b>Head-to-head</b> ({h2h['n']} latest meetings, avg "
+                   f"{h2h['avg_total']} goals): {esc(legs)}"
+                   f"{' <b>⚠ ' + esc(h2h['note']) + '</b>' if h2h.get('note') else ''}</div>")
+    else:
+        out.append("<div class='small'><b>Head-to-head:</b> no recorded meetings in the "
+                   "loaded history - not used, not invented.</div>")
+    news = ev.get("news") or {}
+    if news.get("status") == "csv":
+        entries = "; ".join(f"{e['note']} ({e['source']}, {e['checked_at']}"
+                            f"{'' if e['confirmed'] else ' - unconfirmed'})"
+                            for e in news["entries"])
+        out.append(f"<div class='small'><b>Team news</b> (user-maintained CSV, "
+                   f"checked {esc(news['checked_at'])}): {esc(entries)}</div>")
+    else:
+        out.append(f"<div class='small'><b>Team news:</b> {esc(news.get('note','unverified'))}"
+                   " - reported as unavailable, not invented.</div>")
+    out.append("</div>")
+    return "".join(out)
+
+
 def _pred_card(f: dict) -> str:
     v = f.get("verify") or {}
     conf = v.get("confidence")
@@ -140,25 +203,37 @@ def _pred_card(f: dict) -> str:
               f"model {esc(f.get('model_version',''))}<br>"
               f"<span class='fid'>fixture id: {esc(f.get('fid',''))} · sources: {esc(', '.join(v.get('sources', [])))}</span></div>")
     parts = [header]
+    # ---- section 1: verified facts (real results only) ----
+    if f.get("evidence"):
+        parts.append(_evidence_html(f["evidence"]))
+    # ---- section 2: model prediction (never presented as fact) ----
+    parts.append("<div style='background:#eef4fd;border:1px solid #cddcfa;border-radius:6px;"
+                 "padding:8px 12px;margin:8px 0'><b>MODEL PREDICTION</b> "
+                 "<span class='small'>(estimates, not confirmed outcomes; Dixon-Coles "
+                 "Poisson goal model blended with Elo)</span>")
     if f.get("explain"):
         parts.append(f"<div class='small'>{esc(f['explain'])}{esc(score_txt)}</div>")
-    form = f.get("form") or {}
-    fh, fa = form.get("home", {}), form.get("away", {})
-    if fh.get("played"):
-        parts.append(f"<div class='small'>Last {fh.get('played', 0)}: {disp(f['home'])} "
-                     f"{fh.get('pts', 0)} pts ({fh.get('gf', 0)} GF / {fh.get('ga', 0)} GA) · "
-                     f"{disp(f['away'])} {fa.get('pts', 0)} pts "
-                     f"({fa.get('gf', 0)} GF / {fa.get('ga', 0)} GA)</div>")
-    for m in f["markets"]:
-        parts.append(_market_table(m))
     if f.get("model_only"):
         bits = []
         for mo in f["model_only"]:
             pr = " / ".join(f"{SEL_LABEL.get(s, s)} {pct(p)}" for s, p in mo["probs"].items())
             bits.append(f"<b>{esc(MKT_SHORT.get(mo['market'], mo['market']))}</b>: {pr}")
-        parts.append(f"<div class='small' style='margin-top:6px'>📊 Model-only "
-                     f"(no current bookmaker prices - no fair line, no EV): "
+        parts.append(f"<div class='small' style='margin-top:6px'>📊 Model probabilities, "
+                     f"markets with no current bookmaker price (no fair line, no EV): "
                      + " · ".join(bits) + "</div>")
+    parts.append("</div>")
+    # ---- section 3: betting market information (real prices only) ----
+    parts.append("<div style='background:#fdf6ec;border:1px solid #f0dcba;border-radius:6px;"
+                 "padding:8px 12px;margin:8px 0'><b>BETTING MARKET INFORMATION</b> "
+                 "<span class='small'>(real retrieved prices only; timestamps shown in "
+                 "the sync log; stale prices excluded)</span>")
+    if f["markets"]:
+        for m in f["markets"]:
+            parts.append(_market_table(m))
+    else:
+        parts.append("<div class='small'>No bookmaker prices retrieved for this fixture "
+                     "from configured sources - no fair line and no EV published.</div>")
+    parts.append("</div>")
     if f.get("notes"):
         parts.append(f"<div class='small'>⚠ {'; '.join(map(esc, f['notes']))}</div>")
     mkts = " ".join(m["market"] for m in f["markets"]) + " " + \
@@ -167,6 +242,53 @@ def _pred_card(f: dict) -> str:
     return (f"<div class='fx' data-q=\"{q}\" data-day='{f.get('day_index')}' "
             f"data-country=\"{esc(f['country'])}\" data-league=\"{esc(f['league'])}\" "
             f"data-markets='{mkts}' data-verify='verified'>" + "".join(parts) + "</div>")
+
+
+def _over_table(rows: list[dict], line: str, letter: str) -> str:
+    """Ranked over-goals selections. Ranked by confidence tier -> calibrated
+    model probability -> data completeness -> evidence quality (documented
+    rule). EV is displayed but NEVER determines rank."""
+    if not rows:
+        return (f"<div class='warn'><b>TABLE {letter}: no eligible Over {line} "
+                f"selections published.</b> The system does not force a daily "
+                f"shortlist - insufficient data or failed verification means "
+                f"no entry.</div>")
+    conf_c = {"high": "#2e7d32", "moderate": "#ef6c00", "low": "#b71c1c"}
+    out = ["<table><tr><th>#</th><th>Fixture</th><th>Competition</th>"
+           "<th>Kickoff (CAT)</th><th class='r'>Model p</th><th class='r'>Fair odds</th>"
+           "<th>Recent form</th><th>Home/Away</th><th>H2H</th><th>Team news</th>"
+           "<th class='r'>Best odds</th><th class='r'>EV</th>"
+           "<th>Data / conf</th><th>Supports / risks</th></tr>"]
+    for r in rows:
+        cc = conf_c.get(r["conf"], "#555")
+        odds_txt = (f"{r['odds']:.2f}<br><span class='small'>{esc(r['book'])}</span>"
+                    if r.get("odds") else
+                    "<span class='small'>not retrieved<br>(no EV computed)</span>")
+        ev_txt = f"{100*r['ev']:.1f}%" if r.get("ev") is not None else "—"
+        sup = "<br>".join("＋ " + esc(s) for s in r["support"][:3])
+        ris = "<br>".join("－ " + esc(s) for s in r["risks"][:3])
+        out.append(
+            f"<tr class='pagrow'><td>{r['rank']}</td>"
+            f"<td>{esc(r['fixture'].title())}<br><span class='fid'>{esc(r['fid'])}</span></td>"
+            f"<td class='small'>{esc(r['country'])} · {esc(r['league'])}</td>"
+            f"<td class='small'>{esc(r['kickoff_local'] or r['date'])}</td>"
+            f"<td class='r'><b>{pct(r['p'])}</b></td>"
+            f"<td class='r'>{r['fair_odds']:.2f}</td>"
+            f"<td class='small'>{esc(r['form_ev'])}</td>"
+            f"<td class='small'>{esc(r['venue_ev'])}</td>"
+            f"<td class='small'>{esc(r['h2h_ev'])}</td>"
+            f"<td class='small'>{esc(r['news'])}</td>"
+            f"<td class='r'>{odds_txt}</td><td class='r'>{ev_txt}</td>"
+            f"<td class='small'>completeness {r['completeness']:.0f}% · "
+            f"<b style='color:{cc}'>{esc(r['conf'])}</b> · evidence {100*r['quality']:.0f}%</td>"
+            f"<td class='small'>{sup}{'<br>' if sup and ris else ''}{ris}</td></tr>")
+    out.append("</table>")
+    if all(not r.get("odds") for r in rows):
+        out.append("<p class='small'>No current bookmaker prices were retrieved for this "
+                   "line (O/U 3.5 is rarely in the free feed) - fair odds shown are pure "
+                   "model (1/p) and NO expected value is claimed. Local-book prices can be "
+                   "added to data/manual_odds.csv (market OU35).</p>")
+    return "".join(out)
 
 
 def _row(f: dict, css: str, why_label: str, why: str) -> str:
@@ -313,6 +435,15 @@ this page re-fetches itself every 2 h.
 {cards}
 <h2>Value bets</h2>
 {_picks_table(picks)}
+<h2>🎯 Over-goals strategy - ranked selections</h2>
+<p class="small">Your preferred markets, evaluated independently for every verified
+upcoming fixture. Ranking rule (documented): confidence tier → calibrated model
+probability → data completeness → evidence quality. <b>EV never determines rank.</b>
+A match strong on Over 2.5 need not qualify for Over 3.5.</p>
+<h3 style="margin-top:6px">TABLE A — BEST OVER 2.5 GOALS SELECTIONS</h3>
+{_over_table((run.get('over_tables') or {}).get('A', []), '2.5', 'A')}
+<h3>TABLE B — BEST OVER 3.5 GOALS SELECTIONS</h3>
+{_over_table((run.get('over_tables') or {}).get('B', []), '3.5', 'B')}
 <p class="small">Edge = model probability − consensus fair probability (each bookmaker de-vigged, then
 averaged). EV = p × best price − 1, computed ONLY when a real, current bookmaker price exists.
 Positive estimated EV depends on the model being well calibrated and does NOT guarantee profit -

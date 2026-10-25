@@ -388,3 +388,133 @@ def test_report_sections_and_filters_render():
         assert token in page, token
     # withheld fixture must NOT expose probabilities/margins
     assert "54.0%" not in page.split("prediction withheld")[1][:800]
+
+
+# ============== acceptance: calendar, over-goals, staking caps ==============
+
+def test_calendar_today_and_window_from_server_utc():
+    # acceptance: today=25 Oct 2026 -> 4-day view covers 25-28 inclusive
+    from build_calendar import build_data
+    import pandas as _pd
+    with db.conn() as c:
+        f = fx(pid="w1", days_ahead=1).to_row()
+        f["kickoff_utc"] = "2026-10-26T16:30:00Z"
+        db.upsert_fixture(c, f)
+    data = build_data(today=date(2026, 10, 25))
+    assert data["lusaka_today"] == "2026-10-25"
+    assert data["window4"] == ["2026-10-25", "2026-10-26", "2026-10-27", "2026-10-28"]
+    assert "2026-10-26" in data["days"]
+    row = data["days"]["2026-10-26"][0]
+    assert row["kickoff"] == "18:30"          # 16:30 UTC -> 18:30 CAT
+    assert row["fid"].startswith("test:")
+
+
+def test_calendar_past_date_keeps_result_row():
+    from build_calendar import build_data
+    with db.conn() as c:
+        f = fx(pid="p1").to_row()
+        f["date"] = "2026-10-24"
+        f["mkey"] = "2026-10-24|alpha|beta"
+        f["kickoff_utc"] = "2026-10-24T13:00:00Z"
+        db.upsert_fixture(c, f)
+        db.set_fixture_prediction(c, f["fid"], "withheld", "no prices")
+    data = build_data(today=date(2026, 10, 25))
+    row = data["days"]["2026-10-24"][0]
+    # no provider result yet -> honest awaiting label, never a fake score
+    assert row["status"] == "awaiting-result" and row["score"] is None
+
+
+def test_ou_lines_grading():
+    assert bet_won("OU25", "over", 2, 1) and not bet_won("OU25", "under", 2, 1)
+    assert bet_won("OU35", "over", 2, 2) and not bet_won("OU35", "over", 2, 1)
+    assert bet_won("OU15", "under", 1, 0) and not bet_won("OU15", "under", 1, 1)
+
+
+def test_exposure_caps_correlated_and_total():
+    from src.value import exposure_caps
+    picks = [
+        {"fixture_id": "A", "mkey": "a", "stake": 25.0, "notes": []},
+        {"fixture_id": "A", "mkey": "a", "stake": 20.0, "notes": []},  # same fixture
+        {"fixture_id": "B", "mkey": "b", "stake": 20.0, "notes": []},
+        {"fixture_id": "C", "mkey": "c", "stake": 20.0, "notes": []},
+        {"fixture_id": "D", "mkey": "d", "stake": 20.0, "notes": []},
+    ]
+    out = exposure_caps(picks, bankroll=1000.0, per_fixture_pct=0.03, total_pct=0.10)
+    by_a = sum(p["stake"] for p in out if p["fixture_id"] == "A")
+    assert by_a <= 30.0 + 1e-9                      # 3% per-fixture cap
+    assert sum(p["stake"] for p in out) <= 100.0 + 1e-9   # 10% slate cap
+    # stake never appears without those caps being respected
+    assert all(p["stake"] <= 30.0 + 1e-9 for p in out)
+
+
+def test_goals_evidence_real_numbers(tmp_path, monkeypatch):
+    import pandas as pd
+    monkeypatch.chdir(tmp_path)          # no data/team_news.csv here -> unverified
+    from src.goals_analysis import (head_to_head, fixture_evidence, evidence_quality,
+                                    supporting_risks, team_news)
+    rows = []
+    d0 = date(2026, 9, 1)
+    for i in range(12):
+        d = d0 + timedelta(days=7 * i)
+        rows.append(dict(date=pd.Timestamp(d), home="alpha", away="gamma",
+                         hg=3, ag=1))                 # alpha home wins 3-1 (over)
+        rows.append(dict(date=pd.Timestamp(d + timedelta(days=2)), home="beta",
+                         away="alpha", hg=1, ag=2))   # alpha away wins (3 total: over2.5)
+    hist = pd.DataFrame(rows)
+
+    class _E:                                   # tiny elo stub
+        def r(self, t):
+            return 1500
+    model = type("M", (), {"elo": _E()})
+    ev = fixture_evidence(model(), hist, "alpha", "beta", date(2026, 12, 1),
+                          {"model": {"form_last_n": 5}})
+    f5 = ev["form5_home"]
+    assert f5["n"] == 5 and f5["over25_n"] + f5["n"] >= f5["over25_n"]
+    assert f5["over25_pct"] >= 80               # these synthetic games are high-scoring
+    assert ev["split_home"]["n"] >= 4           # home-only sample
+    q = evidence_quality(ev)
+    assert 0.5 <= q <= 1.0
+    h = head_to_head(hist, "alpha", "beta", date(2026, 12, 1))
+    assert h["n"] == 5 and h["over25_n"] == 5 and h["over35_n"] == 0   # latest 5, totals=3
+    news = team_news("alpha", "beta", date(2026, 12, 1))
+    assert news["status"] == "unverified"       # no feed + no CSV: never invented
+    sup, risk = supporting_risks(
+        ev, {"lambda_home": 1.9, "lambda_away": 1.1,
+             "markets": {"OU35": {"over": 0.31}}}, "OU35")
+    assert any("expected total goals 3.00" in s for s in sup)
+    assert any("news" in r.lower() for r in risk)
+
+
+def test_over_tables_separate_and_ranked_not_by_ev():
+    from src.report import render
+    mk = lambda rank, p, ev, conf: {"rank": rank, "fixture": "a t%d v b t%d" % (rank, rank),
+        "league": "L", "country": "C", "kickoff_local": "Sat · 18:00 CAT",
+        "day_label": "Today", "date": "2026-10-25", "fid": "f%d" % rank, "p": p,
+        "fair_odds": round(1 / p, 2), "xg_total": 3.1, "top_score": (2, 1),
+        "conf": conf, "completeness": 85, "quality": .8, "odds": 2.0 if ev else None,
+        "book": "B365" if ev else None, "ev": ev, "is_value": bool(ev),
+        "form_ev": "x", "venue_ev": "y", "h2h_ev": "z", "news": "unverified",
+        "support": ["s1"], "risks": ["r1"], "model_version": "m"}
+    # rows pre-ranked by run_daily rule; render must keep tables separate and ordered
+    A = [mk(1, .62, .3, "high"), mk(2, .58, -.1, "high")]
+    B = [mk(1, .33, None, "moderate")]
+    run = {"date": "2026-10-25", "generated_at": "x", "generated_utc": "y",
+           "threshold": .05, "bankroll": 1000.0, "n_fixtures": 0,
+           "model_version": "m", "window_dates": ["2026-10-25"], "counts": {},
+           "notices": [], "over_tables": {"A": A, "B": B}}
+    page = render(run, [], [], [])
+    assert "TABLE A — BEST OVER 2.5" in page and "TABLE B — BEST OVER 3.5" in page
+    ia = page.index("TABLE A"); ib = page.index("TABLE B")
+    assert ia < ib                                    # separate tables
+    assert "62.0%" in page[ia:ib] and "33.0%" in page[ib:]
+    assert "EV never determines rank" in page
+
+
+def test_calendar_html_nav_controls_and_cachebuster():
+    from build_calendar import HTML_PAGE
+    page = HTML_PAGE.replace("{CSS}", "")
+    for token in ("Previous day", "Next day", "Today", "4-day upcoming view",
+                  "type=\"date\"", "dfrom", "Load range", "upcoming", "live",
+                  "results", "calendar_data.json?v=", "lusaka_today",
+                  "generated_at_utc", "fresh"):
+        assert token in page, token

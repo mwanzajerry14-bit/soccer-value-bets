@@ -19,7 +19,10 @@ from src import db
 from src.historical import load_results
 from src.settings import af_season_year, api_key, current_season_code, load_config, load_env
 from src.teamnames import canonical
+from src.util import lusaka_today
 from src.value import bet_won
+
+TODAY = lusaka_today()
 
 
 def settle_demo_note():
@@ -43,7 +46,7 @@ def main() -> None:
             # group by league + date to minimise lookups
             groups: dict[tuple, list] = {}
             for r in pend:
-                if date.fromisoformat(r["date"]) >= date.today():
+                if date.fromisoformat(r["date"]) >= TODAY:
                     continue  # future match, nothing to settle
                 groups.setdefault((r["league"], r["date"]), []).append(r)
 
