@@ -1,0 +1,118 @@
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<title>Match calendar — soccer-value-bets</title><style>
+body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:1100px;margin:24px auto;padding:0 16px;color:#1a1a2e}
+h1{font-size:22px}h2{font-size:17px;margin-top:28px;border-bottom:2px solid #3949ab;padding-bottom:4px}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0}
+th{background:#3949ab;color:#fff;padding:6px 8px;text-align:left}
+td{border-bottom:1px solid #e3e3ee;padding:5px 8px}
+tr.v td{background:#e8f5e9}
+.badge{background:#2e7d32;color:#fff;border-radius:4px;padding:1px 6px;font-size:11px}
+.chip{display:inline-block;background:#eef0fb;border:1px solid #cfd5f2;border-radius:10px;padding:1px 8px;font-size:11px;margin-right:4px}
+.fid{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;color:#777}
+.warn{background:#fff8e1;border:1px solid #ffe082;padding:10px 14px;border-radius:6px;font-size:13px;margin:12px 0}
+.demo{background:#ffebee;border:1px solid #ef5350;padding:12px;border-radius:6px;font-weight:600}
+.summary{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0}
+.card{background:#f4f6ff;border:1px solid #dfe3f5;border-radius:8px;padding:10px 16px;font-size:13px}
+.card b{font-size:18px;display:block}
+.small{font-size:12px;color:#555}
+td.r,th.r{text-align:right}
+.dayhdr{background:#dfe3f5;border-radius:6px;padding:4px 10px;font-weight:700;font-size:13px;margin:18px 0 6px}
+.fx{border-left:3px solid #3949ab;padding-left:10px;margin-bottom:14px}
+.fx.w-l{border-left-color:#ef6c00}.fx.f-l{border-left-color:#c62828}.fx.b-l{border-left-color:#9e9e9e}
+.btn{display:inline-block;background:#3949ab;color:#fff!important;padding:6px 14px;border-radius:6px;text-decoration:none;font-size:13px;border:0;cursor:pointer}
+.more{margin:8px 0 18px}
+select,input{padding:4px 8px;font-size:13px}
+
+.ctrl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.livecard{background:#ffebee!important;border-color:#ef5350!important}
+.fresh-ok{color:#2e7d32;font-weight:700}.fresh-warn{color:#ef6c00;font-weight:700}
+.fresh-bad{color:#c62828;font-weight:700}
+.st{font-size:11px;border-radius:4px;padding:1px 6px;font-weight:700}
+.st-scheduled{background:#e3f2fd;color:#1565c0}.st-live{background:#ffebee;color:#c62828}
+.st-completed{background:#e8f5e9;color:#2e7d32}.st-awaiting-result{background:#fff8e1;color:#ef6c00}
+.st-removed,.st-postponed,.st-cancelled,.st-abandoned{background:#efebe9;color:#5d4037}
+.st-unknown{background:#eceff1;color:#455a64}
+.fr{display:flex;gap:8px;align-items:baseline;border-bottom:1px solid #ececf4;padding:6px 2px;font-size:13px}
+.fr .t{width:52px;font-weight:700}.fr .lg{width:190px;color:#555;font-size:12px}
+.fr .mt{flex:1}.fr .pr{text-align:right;font-size:12px;color:#555;white-space:nowrap}
+h3.dhead{background:#3949ab;color:#fff;border-radius:6px;padding:4px 12px;font-size:14px;margin:16px 0 6px}
+</style></head><body>
+<h1>📅 Match calendar — verified fixtures & over-goals analysis</h1>
+<p class="small">Server-generated <b id="genat">…</b> · <span id="fresh"></span> ·
+data re-fetched automatically every 30 min and after each scheduled run ·
+source: API providers + football-data results · nothing cached locally as truth.</p>
+<div class="ctrl">
+  <button class="btn" onclick="shift(-1)">◀ Previous day</button>
+  <input type="date" id="dp" onchange="pick(this.value)">
+  <button class="btn" onclick="shift(1)">Next day ▶</button>
+  <button class="btn" onclick="goToday()">📍 Today</button>
+  <button class="btn" style="background:#6d4c41" onclick="fourday()">4-day upcoming view</button>
+  <span class="small">Range (past review):
+    <input type="date" id="dfrom"> → <input type="date" id="dto">
+    <button class="btn" onclick="rangeView()">Load range</button></span>
+  <select id="mode" onchange="draw()" style="padding:6px">
+    <option value="all">All fixtures</option>
+    <option value="upcoming">Upcoming (scheduled only)</option>
+    <option value="live">Live matches</option>
+    <option value="results">Previous matches &amp; results</option>
+  </select>
+</div>
+<h3 class="dhead" id="selhead">…</h3>
+<div id="list"></div>
+<p class="small"><a href="index.html">Daily reports archive</a> ·
+<a href="results.html">Results &amp; calibration</a> · <a href="admin.html">Admin</a></p>
+<script>
+var DATA=null, SEL=null, SELTO=null;
+function fmtDay(iso){var d=new Date(iso+"T12:00:00Z");
+  return d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric",timeZone:"Africa/Lusaka"});}
+function freshness(){var g=new Date(DATA.generated_at_utc), age=(Date.now()-g.getTime())/36e5;
+  var el=document.getElementById('fresh');document.getElementById('genat').textContent=DATA.generated_at_cat;
+  var cls=age<8?'fresh-ok':age<30?'fresh-warn':'fresh-bad';
+  el.innerHTML='<span class="'+cls+'">'+(age<1?'updated just now':'updated '+age.toFixed(1)+'h ago')
+    +(age>30?' — STALE: the automatic refresh may be paused; data is '+age.toFixed(0)+'h old':'')+'</span>';}
+function anchor(sel){SEL=sel;SELTO=sel;document.getElementById('dp').value=sel;draw();}
+function isoPlus(iso,n){var d=new Date(iso+"T12:00:00Z");d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);}
+function shift(n){anchor(isoPlus(SEL,n));}
+function pick(v){if(v)anchor(v);}
+function goToday(){anchor(DATA.lusaka_today);}
+function fourday(){SEL=DATA.lusaka_today;SELTO=DATA.window4[3];document.getElementById('dp').value=SEL;draw();}
+function rangeView(){var a=document.getElementById('dfrom').value,b=document.getElementById('dto').value;
+  if(a&&b){SEL=a;SELTO=b;draw();}}
+function stChip(f){var s=f.status,lab=s==='awaiting-result'?'finished (awaiting official result)':s;
+  return '<span class="st st-'+s+'">'+lab+'</span>';}
+function row(f){var pr='';
+  if(f.o25!=null){pr='O2.5 '+Math.round(f.o25*100)+'%'+(f.o35!=null?' · O3.5 '+Math.round(f.o35*100)+'%':'')
+     +(f.conf?' · '+f.conf:'');}
+  if(f.picks&&f.picks.length){pr+=(pr?' · ':'')+'pick: '+f.picks.map(function(p){return p.market+'/'+p.sel+' @'+p.odds+(p.status!=='pending'?' ('+p.status+')':'')}).join(', ');}
+  var nb=f.note&&f.pub!=='published'?'<span class="small" style="color:#b71c1c"> — '+f.note+'</span>':'';
+  return '<div class="fr"><span class="t">'+(f.kickoff||'--:--')+'</span>'
+    +'<span class="lg">'+f.league+'</span>'
+    +'<span class="mt"><b>'+f.home+' v '+f.away+'</b> '+stChip(f)+(f.score?' <b>'+f.score+'</b>':'')
+    +(f.verified?' <span class="small" style="color:#2e7d32">✓</span>':'')+nb
+    +'<br><span class="small" style="color:#8a8aa0">'+f.fid+'</span></span>'
+    +'<span class="pr">'+pr+'</span></div>';}
+function draw(){if(!DATA)return;freshness();
+  var mode=document.getElementById('mode').value, out=[], any=false;
+  var from=SEL, to=SELTO||SEL;
+  document.getElementById('selhead').textContent =
+    (from===to ? fmtDay(from) : fmtDay(from)+'  →  '+fmtDay(to))
+    +(DATA.window4.indexOf(from)>=0&&from===to?'  (4-day window: '+DATA.window4.join(', ')+')':'');
+  var d=from;
+  while(d<=to){var list=(DATA.days[d]||[]).filter(function(f){
+      if(mode==='upcoming')return f.status==='scheduled';
+      if(mode==='live')return f.status==='live';
+      if(mode==='results')return f.status==='completed'||f.status==='awaiting-result';
+      return true;});
+    if(list.length){any=true;out.push('<h3 class="dhead" style="background:#5c6bc0">'+fmtDay(d)+'</h3>');
+      list.forEach(function(f){out.push(row(f));});}
+    if(isoPlus(d,1)===d)break; d=isoPlus(d,1); if(d>DATA.max_date&&from>d)break;
+    if(d>to)break;}
+  document.getElementById('list').innerHTML = out.join('') ||
+    '<div class="warn">No tracked fixtures for this selection. Coverage begins 24 Oct 2026 '
+    +'(when tracking started). Future fixtures appear as providers publish them '
+    +'(typically 2-4 days ahead for odds-covered leagues).</div>';}
+function loadData(){fetch('data/calendar_data.json?v='+Date.now()).then(function(r){return r.json();})
+  .then(function(j){DATA=j;if(!SEL)SEL=j.lusaka_today,SELTO=SEL,document.getElementById('dp').value=SEL;draw();})
+  .catch(function(){document.getElementById('list').innerHTML='<div class="warn">calendar data not available yet - run the workflow once.</div>';});}
+loadData(); setInterval(loadData, 30*60*1000);
+</script></body></html>
