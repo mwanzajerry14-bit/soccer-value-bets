@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-10-25T06:08:50Z",
- "generated_at_cat": "25 Oct 2026, 08:08 CAT",
+ "generated_at_utc": "2026-10-25T09:18:42Z",
+ "generated_at_cat": "25 Oct 2026, 11:18 CAT",
  "lusaka_today": "2026-10-25",
  "min_date": "2026-07-27",
  "max_date": "2026-11-04",
@@ -185,6 +185,13 @@
       "sel": "over",
       "odds": 1.71,
       "book": "1xBet",
+      "status": "pending"
+     },
+     {
+      "market": "1X2",
+      "sel": "home",
+      "odds": 2.71,
+      "book": "Pinnacle",
       "status": "pending"
      }
     ]
@@ -872,7 +879,22 @@
     "o25": 0.78087790448716,
     "o35": null,
     "conf": "high",
-    "picks": []
+    "picks": [
+     {
+      "market": "OU25",
+      "sel": "over",
+      "odds": 1.32,
+      "book": "Betsson",
+      "status": "pending"
+     },
+     {
+      "market": "1X2",
+      "sel": "away",
+      "odds": 1.54,
+      "book": "Codere (IT)",
+      "status": "pending"
+     }
+    ]
    },
    {
     "fid": "the-odds-api:63af660d4d0d52f8ac7685172ef939c4",
@@ -1224,6 +1246,13 @@
       "sel": "under",
       "odds": 3.12,
       "book": "Betsson",
+      "status": "pending"
+     },
+     {
+      "market": "1X2",
+      "sel": "draw",
+      "odds": 5.74,
+      "book": "Pinnacle",
       "status": "pending"
      }
     ]
