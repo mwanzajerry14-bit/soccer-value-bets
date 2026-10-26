@@ -518,3 +518,89 @@ def test_calendar_html_nav_controls_and_cachebuster():
                   "results", "calendar_data.json?v=", "lusaka_today",
                   "generated_at_utc", "fresh"):
         assert token in page, token
+
+
+class TestAutoDating:
+    """Task 3 acceptance: the site must compute the Zambia date live, every page
+    load — a stale build/commit/file must NEVER masquerade as 'today'."""
+
+    def test_midnight_lusaka_boundary(self):
+        from zoneinfo import ZoneInfo
+        lu = ZoneInfo("Africa/Lusaka")
+        before = datetime(2026, 10, 25, 21, 59, 59,
+                          tzinfo=timezone.utc).astimezone(lu)
+        after = datetime(2026, 10, 25, 22, 0, 0,
+                         tzinfo=timezone.utc).astimezone(lu)
+        assert before.date().isoformat() == "2026-10-25"
+        assert after.date().isoformat() == "2026-10-26"   # flips at midnight CAT
+
+    def test_lusaka_today_utc_derived(self):
+        from src.util import lusaka_today
+        from zoneinfo import ZoneInfo
+        expect = datetime.now(timezone.utc).astimezone(
+            ZoneInfo("Africa/Lusaka")).date()
+        assert lusaka_today() == expect
+
+    def test_today_report_rel_and_latest_json(self, tmp_path, monkeypatch):
+        from zoneinfo import ZoneInfo
+        import update_site_index as usi
+        monkeypatch.chdir(tmp_path)
+        (tmp_path / "reports").mkdir(); (tmp_path / "data").mkdir()
+        (tmp_path / "reports" / "2026-10-25_report.html").write_text("x")
+        day = datetime.now(timezone.utc).astimezone(
+            ZoneInfo("Africa/Lusaka")).date().isoformat()
+        assert usi.today_report_rel("2026-10-25") == "reports/2026-10-25_report.html"
+        # an old report is found by its OWN date, never relabelled as today
+        url, rep_date = usi.latest_report_rel()
+        assert rep_date == "2026-10-25" and url.endswith("2026-10-25_report.html")
+        payload = usi.build_latest_json()
+        assert payload["report_date"] == "2026-10-25"
+        assert (tmp_path / "data" / "latest.json").exists()
+        assert payload["lusaka_today_at_build"] == day    # clock-derived, not filename
+        # 2026-10-26 report absent -> tomorrow the index must fall back, not lie
+        assert usi.today_report_rel("2026-10-26") is None
+
+    def test_index_page_dynamic_tokens(self, tmp_path, monkeypatch):
+        import update_site_index as usi
+        monkeypatch.chdir(tmp_path)
+        (tmp_path / "reports").mkdir(); (tmp_path / "data").mkdir()
+        (tmp_path / "reports" / "2026-10-25_report.html").write_text("x")
+        usi.main()
+        page = (tmp_path / "index.html").read_text()
+        for token in ("timeZone:'Africa/Lusaka'", "method:'HEAD'",
+                      "data/latest.json", "4 calendar days, Africa/Lusaka CAT",
+                      "location.reload", "?v=", "midnight"):
+            assert token in page, token
+        # the iframe starts EMPTY — JS decides the URL from the live clock;
+        # the old report may appear only inside the (labelled) archive list
+        assert '<iframe id="rep" title="daily report" onload="sizeFrame()"></iframe>' in page
+        assert 'src="reports/' not in page.split("Report archive")[0]
+
+    def test_dated_report_live_tokens(self):
+        from src.report import render
+        run = {"date": "2026-10-25", "generated_at": "25 Oct, 06:30 CAT",
+               "generated_utc": "2026-10-25 04:30 UTC", "threshold": .05,
+               "bankroll": 1000.0, "n_fixtures": 0, "model_version": "m",
+               "window_dates": ["2026-10-25"], "counts": {}, "notices": []}
+        page = render(run, [], [], [])
+        for token in ("timeZone:'Africa/Lusaka'", "lvclock", "lage",
+                      "This is the report for", "it is now", "in Zambia",
+                      "location.reload", "↻ Refresh"):
+            assert token in page, token
+        assert "2026-10-25T04:30:00Z" in page           # gen ts fed to JS clock
+
+    def test_calendar_live_today_and_stale_banner(self):
+        from build_calendar import HTML_PAGE
+        for token in ("lusakaNow", "timeZone:'Africa/Lusaka'",
+                      "the Zambia date has moved on", "location.reload",
+                      "stale", "calendar_data.json?v="):
+            assert token in HTML_PAGE, token
+
+    def test_window_rolls_with_today(self):
+        from build_calendar import build_data
+        from src.util import lusaka_today
+        data = build_data()
+        day = lusaka_today().isoformat()
+        assert data["lusaka_today"] == day
+        assert data["window4"][0] == day
+        assert data["window4"][3] == (lusaka_today() + timedelta(days=3)).isoformat()

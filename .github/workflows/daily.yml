@@ -81,7 +81,7 @@ jobs:
         run: |
           git config user.name "value-bot"
           git config user.email "value-bot@users.noreply.github.com"
-          git add -f data/value_bets.db data/calendar_data.json reports/ \
-                      index.html results.html admin.html calendar.html || true
+          git add -f data/value_bets.db data/calendar_data.json data/latest.json \
+                      reports/ index.html results.html admin.html calendar.html || true
           git commit -m "daily run $(date +%F)" || echo "nothing to commit"
           git push || true

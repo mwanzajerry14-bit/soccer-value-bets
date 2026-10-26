@@ -396,3 +396,28 @@ Quarter-Kelly with a 2% per-bet cap, PLUS exposure caps: same-fixture combined
 stakes <= 3% of bankroll (correlated selections), whole slate <= 10%
 (configurable: max_stake_fixture_pct / max_stake_total_pct). A stake is never
 suggested merely because EV is positive - data gates come first.
+
+## Always-today dating (v5 fix)
+
+The site computes the Zambia date itself, in your browser, at every page load
+(Intl clock, Africa/Lusaka) - the date is NEVER read from a filename, a commit,
+or the last build:
+
+- **index.html** is a dynamic "Today" page: it shows a live CAT clock, the
+  rolling 4-day window (today -> +3, recomputed per load), then HEAD-probes
+  `reports/<today>_report.html` (cache-busted). If today's report is not
+  published yet it falls back to `data/latest.json` and says so plainly
+  ("stale - not relabelled as today"). The date rolling over midnight while the
+  page is open triggers an automatic reload.
+- **Every dated report page** carries the same live clock, the report's age, a
+  Refresh button, a "the date has moved on - open today's page" banner when
+  viewed later, and a midnight-CAT auto-reload.
+- **calendar.html** anchors "Today" and the 4-day view on the client-side
+  Lusaka date and warns loudly when the data build is from an earlier Zambia
+  day than your clock (data is labelled stale, never disguised).
+- Both GitHub Actions runs (06:30 CAT full run; every-6h refresh) regenerate
+  `index.html` + `data/latest.json` so the pointer follows the newest report.
+
+Cause of the old bug: a static redirect page pointing at one dated file baked
+at 06:30 CAT - nothing knew the current date between builds. Fixed by making
+the date client-computed everywhere and cache-busting every fetch.

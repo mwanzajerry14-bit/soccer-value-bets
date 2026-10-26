@@ -397,6 +397,13 @@ def _filter_bar(window_dates: list[str], fixtures: list[dict]) -> str:
 
 def render(run: dict, picks: list[dict], fixtures: list[dict],
            unmatched: list[str], demo: bool = False) -> str:
+    from datetime import datetime as _dt
+    gen_js = "null"
+    try:
+        _gu = (run.get("generated_utc") or "").replace(" UTC", "")
+        gen_js = f'new Date("{_dt.strptime(_gu, "%Y-%m-%d %H:%M").strftime("%Y-%m-%dT%H:%M:00Z")}")'
+    except (ValueError, TypeError):
+        pass
     demo_banner = ("<div class='demo'>DEMONSTRATION REPORT — generated offline from real historical "
                    "closing odds (football-data.co.uk). Results are already known at these dates; "
                    "this shows report layout only. Live runs use your API keys.</div>") if demo else ""
@@ -427,9 +434,45 @@ def render(run: dict, picks: list[dict], fixtures: list[dict],
 <h1>⚽ Football value-bet report — {esc(run['date'])}</h1>
 <p class="small">Window: <b>{esc(window_txt)}</b> · Generated {esc(run['generated_at'])}
 ({esc(run.get('generated_utc',''))}) · Model: {esc(run.get('model_version','DC+Elo'))} — Dixon-Coles
-(time-decayed) blended with Elo · Every fixture verified before prediction · Auto-scheduled daily;
-this page re-fetches itself every 2 h.
-<a class="btn" href="{REFRESH_URL}" target="_blank">↻ Run refresh now (GitHub sign-in)</a></p>
+(time-decayed) blended with Elo · Every fixture verified before prediction.</p>
+<div class="card" style="display:inline-block;margin:4px">Now in Zambia (live clock)&nbsp;<b id="lvclock">…</b></div>
+<div class="card" style="display:inline-block;margin:4px">Report age&nbsp;<b id="lage">…</b></div>
+<div id="lvlive"></div>
+<p><button class="btn" onclick="location.reload()">↻ Refresh</button></p>
+<script>
+(function(){{
+  var genUtc = {gen_js};
+  function luParts(d){{var f=new Intl.DateTimeFormat('en-CA',{{timeZone:'Africa/Lusaka',
+    year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',
+    second:'2-digit',hour12:false}});var p={{}};f.formatToParts(d).forEach(function(x){{p[x.type]=x.value;}});
+    return p;}}
+  var opened=luParts(new Date()).year+'-'+luParts(new Date()).month+'-'+luParts(new Date()).day;
+  function tick(){{
+    var p=luParts(new Date()), today=p.year+'-'+p.month+'-'+p.day;
+    var nm=fmtDayName(p);
+    document.getElementById('lvclock').textContent=p.hour+':'+p.minute+' CAT · '+nm;
+    if(genUtc){{var age=(Date.now()-genUtc.getTime())/36e5;
+      var el=document.getElementById('lage');
+      el.textContent=age<1?'fresh this hour':age.toFixed(1)+'h';
+      if(age>26){{el.style.color='#c62828';}}}}
+    // this is a DATED report; if the real Zambia date moved on, say so honestly
+    if(today!==opened){{ setTimeout(function(){{location.reload();}},1500); return; }}
+    if(today!=='{esc(run['date'])}'){{
+      var b=document.getElementById('lvlive');
+      if(!b.innerHTML) b.innerHTML='<div class="warn" style="border-color:#ef5350;background:#ffebee">'+
+        '🕛 This is the report for <b>{esc(run['date'])}</b>, but it is now <b>'+today+
+        '</b> in Zambia. <a href="../index.html">Open today\\u2019s page</a> (auto-updates daily).</div>';
+    }} else {{
+      document.getElementById('lvlive').innerHTML='';
+    }}
+  }}
+  function fmtDayName(p){{return new Date(p.year+'-'+p.month+'-'+p.day+'T12:00:00Z')
+    .toLocaleDateString('en-GB',{{weekday:'short',day:'numeric',month:'short',
+    timeZone:'Africa/Lusaka'}});}}
+  tick(); setInterval(tick, 1000);
+}})();
+</script>
+<a class="btn" href="{REFRESH_URL}" target="_blank">↻ Run pipeline refresh now (GitHub sign-in)</a>
 {''.join(f"<div class='demo'>{esc(n)}</div>" for n in run.get('notices', []))}
 {demo_banner}
 {cards}
