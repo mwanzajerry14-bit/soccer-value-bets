@@ -65,17 +65,28 @@ source: API providers + football-data results · nothing cached locally as truth
 var DATA=null, SEL=null, SELTO=null;
 function fmtDay(iso){var d=new Date(iso+"T12:00:00Z");
   return d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric",timeZone:"Africa/Lusaka"});}
+var openedLuDay=null;
 function freshness(){var g=new Date(DATA.generated_at_utc), age=(Date.now()-g.getTime())/36e5;
   var el=document.getElementById('fresh');document.getElementById('genat').textContent=DATA.generated_at_cat;
   var cls=age<8?'fresh-ok':age<30?'fresh-warn':'fresh-bad';
+  var extra='';
+  if(stalenessBanner){extra=' · <b class="fresh-bad">the Zambia date has moved on to '
+    +lusakaNow()+' — this data was built for '+DATA.lusaka_today+'; the next automatic '
+    +'refresh (every 6h / full report 06:30 CAT) will fill it. Stale data is labelled, '
+    +'never relabelled as current.</b>';}
   el.innerHTML='<span class="'+cls+'">'+(age<1?'updated just now':'updated '+age.toFixed(1)+'h ago')
-    +(age>30?' — STALE: the automatic refresh may be paused; data is '+age.toFixed(0)+'h old':'')+'</span>';}
+    +(age>30?' — STALE: the automatic refresh may be paused; data is '+age.toFixed(0)+'h old':'')
+    +'</span>'+extra;
+  var today=lusakaNow();
+  if(openedLuDay===null)openedLuDay=today;
+  else if(today!==openedLuDay){location.reload();}   // crossed midnight CAT while open
+}
 function anchor(sel){SEL=sel;SELTO=sel;document.getElementById('dp').value=sel;draw();}
 function isoPlus(iso,n){var d=new Date(iso+"T12:00:00Z");d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);}
 function shift(n){anchor(isoPlus(SEL,n));}
 function pick(v){if(v)anchor(v);}
-function goToday(){anchor(DATA.lusaka_today);}
-function fourday(){SEL=DATA.lusaka_today;SELTO=DATA.window4[3];document.getElementById('dp').value=SEL;draw();}
+function goToday(){anchor(lusakaNow());}
+function fourday(){SEL=lusakaNow();SELTO=isoPlus(SEL,3);document.getElementById('dp').value=SEL;draw();}
 function rangeView(){var a=document.getElementById('dfrom').value,b=document.getElementById('dto').value;
   if(a&&b){SEL=a;SELTO=b;draw();}}
 function stChip(f){var s=f.status,lab=s==='awaiting-result'?'finished (awaiting official result)':s;
@@ -112,7 +123,16 @@ function draw(){if(!DATA)return;freshness();
     +'(when tracking started). Future fixtures appear as providers publish them '
     +'(typically 2-4 days ahead for odds-covered leagues).</div>';}
 function loadData(){fetch('data/calendar_data.json?v='+Date.now()).then(function(r){return r.json();})
-  .then(function(j){DATA=j;if(!SEL)SEL=j.lusaka_today,SELTO=SEL,document.getElementById('dp').value=SEL;draw();})
+  .then(function(j){DATA=j;
+     if(!SEL){var lu=lusakaNow();SEL=lu;SELTO=SEL;document.getElementById('dp').value=SEL;}
+     // client clock says a NEWER day than the data? -> data stale, say so loudly
+     if(lusakaNow()>DATA.lusaka_today){stalenessBanner=true;}else{stalenessBanner=false;}
+     draw();})
   .catch(function(){document.getElementById('list').innerHTML='<div class="warn">calendar data not available yet - run the workflow once.</div>';});}
+function lusakaNow(){var f=new Intl.DateTimeFormat('en-CA',{timeZone:'Africa/Lusaka',
+  year:'numeric',month:'2-digit',day:'2-digit'});var p={};
+  f.formatToParts(new Date()).forEach(function(x){p[x.type]=x.value;});
+  return p.year+'-'+p.month+'-'+p.day;}
+var stalenessBanner=false;
 loadData(); setInterval(loadData, 30*60*1000);
 </script></body></html>
