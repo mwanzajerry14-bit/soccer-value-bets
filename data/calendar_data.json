@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-10-26T09:03:07Z",
- "generated_at_cat": "26 Oct 2026, 11:03 CAT",
+ "generated_at_utc": "2026-10-26T10:24:39Z",
+ "generated_at_cat": "26 Oct 2026, 12:24 CAT",
  "lusaka_today": "2026-10-26",
  "min_date": "2026-07-28",
  "max_date": "2026-11-05",
@@ -1378,6 +1378,13 @@
       "sel": "under",
       "odds": 2.07,
       "book": "1xBet",
+      "status": "pending"
+     },
+     {
+      "market": "1X2",
+      "sel": "away",
+      "odds": 6.1,
+      "book": "Unibet (SE)",
       "status": "pending"
      }
     ]
