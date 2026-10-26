@@ -1,14 +1,14 @@
 {
- "generated_at_utc": "2026-10-25T20:54:55Z",
- "generated_at_cat": "25 Oct 2026, 22:54 CAT",
- "lusaka_today": "2026-10-25",
- "min_date": "2026-07-27",
- "max_date": "2026-11-04",
+ "generated_at_utc": "2026-10-26T04:53:18Z",
+ "generated_at_cat": "26 Oct 2026, 06:53 CAT",
+ "lusaka_today": "2026-10-26",
+ "min_date": "2026-07-28",
+ "max_date": "2026-11-05",
  "window4": [
-  "2026-10-25",
   "2026-10-26",
   "2026-10-27",
-  "2026-10-28"
+  "2026-10-28",
+  "2026-10-29"
  ],
  "days": {
   "2026-10-24": [
@@ -1096,7 +1096,7 @@
     "home": "Udinese",
     "away": "Ac Milan",
     "kickoff": "21:45",
-    "status": "live",
+    "status": "completed",
     "score": null,
     "verified": true,
     "completeness": 90.0,
@@ -1114,7 +1114,7 @@
     "home": "Barcelona",
     "away": "Real Madrid",
     "kickoff": "22:00",
-    "status": "live",
+    "status": "completed",
     "score": null,
     "verified": true,
     "completeness": 90.0,
@@ -1132,7 +1132,7 @@
     "home": "Sporting Cp",
     "away": "Academico Viseu",
     "kickoff": "22:30",
-    "status": "live",
+    "status": "completed",
     "score": null,
     "verified": true,
     "completeness": 60.0,
