@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-10-26T22:43:10Z",
- "generated_at_cat": "27 Oct 2026, 00:43 CAT",
+ "generated_at_utc": "2026-10-27T08:22:48Z",
+ "generated_at_cat": "27 Oct 2026, 10:22 CAT",
  "lusaka_today": "2026-10-27",
  "min_date": "2026-07-29",
  "max_date": "2026-11-06",
@@ -38,7 +38,7 @@
     "away": "Paris Saint Germain",
     "kickoff": "20:45",
     "status": "completed",
-    "score": null,
+    "score": "2-1",
     "verified": true,
     "completeness": 90.0,
     "pub": "excluded-status",
@@ -52,14 +52,14 @@
       "sel": "away",
       "odds": 3.5,
       "book": "Coolbet",
-      "status": "pending"
+      "status": "lost"
      },
      {
       "market": "OU25",
       "sel": "over",
       "odds": 2.5,
       "book": "Tipico",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -71,7 +71,7 @@
     "away": "Parma",
     "kickoff": "20:45",
     "status": "completed",
-    "score": null,
+    "score": "2-1",
     "verified": true,
     "completeness": 90.0,
     "pub": "excluded-status",
@@ -85,7 +85,7 @@
       "sel": "home",
       "odds": 1.67,
       "book": "Coolbet",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -97,7 +97,7 @@
     "away": "Beveren",
     "kickoff": "20:47",
     "status": "completed",
-    "score": null,
+    "score": "4-4",
     "verified": true,
     "completeness": 85.0,
     "pub": "excluded-status",
@@ -115,7 +115,7 @@
     "away": "Heerenveen",
     "kickoff": "21:00",
     "status": "completed",
-    "score": null,
+    "score": "2-3",
     "verified": true,
     "completeness": 85.0,
     "pub": "excluded-status",
@@ -151,7 +151,7 @@
     "away": "Porto",
     "kickoff": "21:30",
     "status": "completed",
-    "score": null,
+    "score": "0-1",
     "verified": true,
     "completeness": 85.0,
     "pub": "excluded-status",
@@ -171,7 +171,7 @@
     "away": "Excelsior",
     "kickoff": "13:15",
     "status": "completed",
-    "score": null,
+    "score": "1-0",
     "verified": true,
     "completeness": 90.0,
     "pub": "published",
@@ -185,14 +185,14 @@
       "sel": "over",
       "odds": 1.71,
       "book": "1xBet",
-      "status": "pending"
+      "status": "lost"
      },
      {
       "market": "1X2",
       "sel": "home",
       "odds": 2.71,
       "book": "Pinnacle",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -204,7 +204,7 @@
     "away": "Fiorentina",
     "kickoff": "13:30",
     "status": "completed",
-    "score": null,
+    "score": "2-1",
     "verified": true,
     "completeness": 90.0,
     "pub": "published",
@@ -218,14 +218,14 @@
       "sel": "home",
       "odds": 1.37,
       "book": "1xBet",
-      "status": "pending"
+      "status": "won"
      },
      {
       "market": "OU25",
       "sel": "over",
       "odds": 1.42,
       "book": "Betsson",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -237,7 +237,7 @@
     "away": "Celtic",
     "kickoff": "14:00",
     "status": "completed",
-    "score": null,
+    "score": "1-2",
     "verified": true,
     "completeness": 85.0,
     "pub": "withheld",
@@ -255,7 +255,7 @@
     "away": "Standard",
     "kickoff": "14:30",
     "status": "completed",
-    "score": null,
+    "score": "2-1",
     "verified": true,
     "completeness": 85.0,
     "pub": "published",
@@ -273,7 +273,7 @@
     "away": "Getafe",
     "kickoff": "15:00",
     "status": "completed",
-    "score": null,
+    "score": "4-0",
     "verified": true,
     "completeness": 90.0,
     "pub": "withheld",
@@ -291,7 +291,7 @@
     "away": "Genclerbirligi",
     "kickoff": "15:00",
     "status": "completed",
-    "score": null,
+    "score": "2-0",
     "verified": true,
     "completeness": 85.0,
     "pub": "withheld",
@@ -309,7 +309,7 @@
     "away": "Groningen",
     "kickoff": "15:30",
     "status": "completed",
-    "score": null,
+    "score": "2-2",
     "verified": true,
     "completeness": 90.0,
     "pub": "published",
@@ -327,7 +327,7 @@
     "away": "Feyenoord",
     "kickoff": "15:30",
     "status": "completed",
-    "score": null,
+    "score": "1-1",
     "verified": true,
     "completeness": 90.0,
     "pub": "withheld",
@@ -345,7 +345,7 @@
     "away": "Newcastle United",
     "kickoff": "16:00",
     "status": "completed",
-    "score": null,
+    "score": "0-2",
     "verified": true,
     "completeness": 90.0,
     "pub": "published",
@@ -363,7 +363,7 @@
     "away": "Brentford",
     "kickoff": "16:00",
     "status": "completed",
-    "score": null,
+    "score": "1-1",
     "verified": true,
     "completeness": 90.0,
     "pub": "published",
@@ -377,21 +377,21 @@
       "sel": "home",
       "odds": 5.0,
       "book": "Unibet (SE)",
-      "status": "pending"
+      "status": "lost"
      },
      {
       "market": "1X2",
       "sel": "draw",
       "odds": 4.2,
       "book": "Unibet (SE)",
-      "status": "pending"
+      "status": "won"
      },
      {
       "market": "OU25",
       "sel": "under",
       "odds": 2.28,
       "book": "1xBet",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -403,7 +403,7 @@
     "away": "Brighton And Hove Albion",
     "kickoff": "16:00",
     "status": "completed",
-    "score": null,
+    "score": "2-0",
     "verified": true,
     "completeness": 90.0,
     "pub": "withheld",
@@ -421,7 +421,7 @@
     "away": "Bournemouth",
     "kickoff": "16:00",
     "status": "completed",
-    "score": null,
+    "score": "0-3",
     "verified": true,
     "completeness": 90.0,
     "pub": "published",
@@ -435,7 +435,7 @@
       "sel": "home",
       "odds": 2.29,
       "book": "Coolbet",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -447,7 +447,7 @@
     "away": "Lille",
     "kickoff": "16:00",
     "status": "completed",
-    "score": null,
+    "score": "1-1",
     "verified": true,
     "completeness": 90.0,
     "pub": "published",
@@ -461,14 +461,14 @@
       "sel": "away",
       "odds": 4.02,
       "book": "Pinnacle",
-      "status": "pending"
+      "status": "lost"
      },
      {
       "market": "OU25",
       "sel": "under",
       "odds": 2.08,
       "book": "Pinnacle",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -498,7 +498,7 @@
     "away": "Frosinone",
     "kickoff": "16:00",
     "status": "completed",
-    "score": null,
+    "score": "4-4",
     "verified": true,
     "completeness": 90.0,
     "pub": "withheld",
@@ -516,7 +516,7 @@
     "away": "Venezia",
     "kickoff": "16:00",
     "status": "completed",
-    "score": null,
+    "score": "1-0",
     "verified": true,
     "completeness": 90.0,
     "pub": "published",
@@ -530,7 +530,7 @@
       "sel": "home",
       "odds": 2.23,
       "book": "Unibet (NL)",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -542,7 +542,7 @@
     "away": "Hearts",
     "kickoff": "16:00",
     "status": "completed",
-    "score": null,
+    "score": "0-2",
     "verified": true,
     "completeness": 85.0,
     "pub": "withheld",
@@ -560,7 +560,7 @@
     "away": "Bayer Leverkusen",
     "kickoff": "16:30",
     "status": "completed",
-    "score": null,
+    "score": "3-0",
     "verified": true,
     "completeness": 90.0,
     "pub": "published",
@@ -574,7 +574,7 @@
       "sel": "away",
       "odds": 2.35,
       "book": "Coolbet",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -586,7 +586,7 @@
     "away": "St Truiden",
     "kickoff": "17:00",
     "status": "completed",
-    "score": null,
+    "score": "3-2",
     "verified": true,
     "completeness": 85.0,
     "pub": "published",
@@ -600,7 +600,7 @@
       "sel": "home",
       "odds": 1.36,
       "book": "1xBet",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -612,7 +612,7 @@
     "away": "Real Betis",
     "kickoff": "17:15",
     "status": "completed",
-    "score": null,
+    "score": "0-0",
     "verified": true,
     "completeness": 90.0,
     "pub": "withheld",
@@ -630,7 +630,7 @@
     "away": "Moreirense",
     "kickoff": "17:30",
     "status": "completed",
-    "score": null,
+    "score": "1-3",
     "verified": true,
     "completeness": 90.0,
     "pub": "published",
@@ -644,7 +644,7 @@
       "sel": "away",
       "odds": 3.95,
       "book": "Pinnacle",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -656,7 +656,7 @@
     "away": "Ajax",
     "kickoff": "17:45",
     "status": "completed",
-    "score": null,
+    "score": "1-2",
     "verified": true,
     "completeness": 90.0,
     "pub": "withheld",
@@ -692,7 +692,7 @@
     "away": "Corum",
     "kickoff": "18:00",
     "status": "completed",
-    "score": null,
+    "score": "2-0",
     "verified": true,
     "completeness": 85.0,
     "pub": "withheld",
@@ -710,7 +710,7 @@
     "away": "Lorient",
     "kickoff": "18:15",
     "status": "completed",
-    "score": null,
+    "score": "0-0",
     "verified": true,
     "completeness": 90.0,
     "pub": "published",
@@ -724,14 +724,14 @@
       "sel": "away",
       "odds": 2.52,
       "book": "1xBet",
-      "status": "pending"
+      "status": "lost"
      },
      {
       "market": "OU25",
       "sel": "under",
       "odds": 1.87,
       "book": "1xBet",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -743,7 +743,7 @@
     "away": "Le Mans",
     "kickoff": "18:15",
     "status": "completed",
-    "score": null,
+    "score": "1-1",
     "verified": true,
     "completeness": 90.0,
     "pub": "withheld",
@@ -761,7 +761,7 @@
     "away": "Le Havre",
     "kickoff": "18:15",
     "status": "completed",
-    "score": null,
+    "score": "4-3",
     "verified": true,
     "completeness": 90.0,
     "pub": "published",
@@ -775,14 +775,14 @@
       "sel": "home",
       "odds": 1.6,
       "book": "1xBet",
-      "status": "pending"
+      "status": "won"
      },
      {
       "market": "OU25",
       "sel": "under",
       "odds": 2.56,
       "book": "Betsson",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -794,7 +794,7 @@
     "away": "Strasbourg",
     "kickoff": "18:15",
     "status": "completed",
-    "score": null,
+    "score": "3-0",
     "verified": true,
     "completeness": 90.0,
     "pub": "published",
@@ -808,14 +808,14 @@
       "sel": "away",
       "odds": 4.21,
       "book": "1xBet",
-      "status": "pending"
+      "status": "lost"
      },
      {
       "market": "OU25",
       "sel": "over",
       "odds": 1.44,
       "book": "William Hill",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -827,7 +827,7 @@
     "away": "Troyes",
     "kickoff": "18:15",
     "status": "completed",
-    "score": null,
+    "score": "0-0",
     "verified": true,
     "completeness": 90.0,
     "pub": "withheld",
@@ -845,7 +845,7 @@
     "away": "Leeds United",
     "kickoff": "18:30",
     "status": "completed",
-    "score": null,
+    "score": "0-0",
     "verified": true,
     "completeness": 90.0,
     "pub": "published",
@@ -859,7 +859,7 @@
       "sel": "under",
       "odds": 1.81,
       "book": "1xBet",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -871,7 +871,7 @@
     "away": "Bayern Munich",
     "kickoff": "18:30",
     "status": "completed",
-    "score": null,
+    "score": "1-3",
     "verified": true,
     "completeness": 90.0,
     "pub": "published",
@@ -885,14 +885,14 @@
       "sel": "over",
       "odds": 1.32,
       "book": "Betsson",
-      "status": "pending"
+      "status": "won"
      },
      {
       "market": "1X2",
       "sel": "away",
       "odds": 1.54,
       "book": "Codere (IT)",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -904,7 +904,7 @@
     "away": "Juventus",
     "kickoff": "19:00",
     "status": "completed",
-    "score": null,
+    "score": "0-2",
     "verified": true,
     "completeness": 90.0,
     "pub": "published",
@@ -918,14 +918,14 @@
       "sel": "home",
       "odds": 8.0,
       "book": "Unibet (SE)",
-      "status": "pending"
+      "status": "lost"
      },
      {
       "market": "OU25",
       "sel": "under",
       "odds": 2.08,
       "book": "Coolbet",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -937,7 +937,7 @@
     "away": "Anderlecht",
     "kickoff": "19:30",
     "status": "completed",
-    "score": null,
+    "score": "4-0",
     "verified": true,
     "completeness": 85.0,
     "pub": "published",
@@ -951,7 +951,7 @@
       "sel": "home",
       "odds": 2.35,
       "book": "1xBet",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -981,7 +981,7 @@
     "away": "Levante",
     "kickoff": "19:30",
     "status": "completed",
-    "score": null,
+    "score": "2-1",
     "verified": true,
     "completeness": 90.0,
     "pub": "withheld",
@@ -1017,7 +1017,7 @@
     "away": "Sp Braga",
     "kickoff": "20:00",
     "status": "completed",
-    "score": null,
+    "score": "1-0",
     "verified": true,
     "completeness": 90.0,
     "pub": "published",
@@ -1031,7 +1031,7 @@
       "sel": "home",
       "odds": 6.5,
       "book": "Tipico",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -1043,7 +1043,7 @@
     "away": "Famalicao",
     "kickoff": "20:00",
     "status": "completed",
-    "score": null,
+    "score": "0-4",
     "verified": true,
     "completeness": 90.0,
     "pub": "withheld",
@@ -1097,7 +1097,7 @@
     "away": "Ac Milan",
     "kickoff": "21:45",
     "status": "completed",
-    "score": null,
+    "score": "0-2",
     "verified": true,
     "completeness": 90.0,
     "pub": "published",
@@ -1115,7 +1115,7 @@
     "away": "Real Madrid",
     "kickoff": "22:00",
     "status": "completed",
-    "score": null,
+    "score": "1-2",
     "verified": true,
     "completeness": 90.0,
     "pub": "withheld",
@@ -1189,7 +1189,7 @@
     "away": "Fenerbahce",
     "kickoff": "20:30",
     "status": "completed",
-    "score": null,
+    "score": "2-1",
     "verified": true,
     "completeness": 85.0,
     "pub": "published",
@@ -1207,7 +1207,7 @@
     "away": "Benfica",
     "kickoff": "20:45",
     "status": "completed",
-    "score": null,
+    "score": "1-2",
     "verified": true,
     "completeness": 90.0,
     "pub": "withheld",
@@ -1225,7 +1225,7 @@
     "away": "Lyon",
     "kickoff": "21:30",
     "status": "completed",
-    "score": null,
+    "score": "2-0",
     "verified": true,
     "completeness": 90.0,
     "pub": "published",
@@ -1239,21 +1239,21 @@
       "sel": "away",
       "odds": 6.91,
       "book": "1xBet",
-      "status": "pending"
+      "status": "lost"
      },
      {
       "market": "OU25",
       "sel": "under",
       "odds": 3.12,
       "book": "Betsson",
-      "status": "pending"
+      "status": "won"
      },
      {
       "market": "1X2",
       "sel": "draw",
       "odds": 5.74,
       "book": "Pinnacle",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -1265,7 +1265,7 @@
     "away": "Osasuna",
     "kickoff": "22:00",
     "status": "completed",
-    "score": null,
+    "score": "2-0",
     "verified": true,
     "completeness": 90.0,
     "pub": "withheld",

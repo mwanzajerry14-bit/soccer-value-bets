@@ -1,0 +1,162 @@
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<meta http-equiv="refresh" content="7200">
+<title>Value bets — 2026-10-27</title><style>
+body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:1100px;margin:24px auto;padding:0 16px;color:#1a1a2e}
+h1{font-size:22px}h2{font-size:17px;margin-top:28px;border-bottom:2px solid #3949ab;padding-bottom:4px}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0}
+th{background:#3949ab;color:#fff;padding:6px 8px;text-align:left}
+td{border-bottom:1px solid #e3e3ee;padding:5px 8px}
+tr.v td{background:#e8f5e9}
+.badge{background:#2e7d32;color:#fff;border-radius:4px;padding:1px 6px;font-size:11px}
+.chip{display:inline-block;background:#eef0fb;border:1px solid #cfd5f2;border-radius:10px;padding:1px 8px;font-size:11px;margin-right:4px}
+.fid{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;color:#777}
+.warn{background:#fff8e1;border:1px solid #ffe082;padding:10px 14px;border-radius:6px;font-size:13px;margin:12px 0}
+.demo{background:#ffebee;border:1px solid #ef5350;padding:12px;border-radius:6px;font-weight:600}
+.summary{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0}
+.card{background:#f4f6ff;border:1px solid #dfe3f5;border-radius:8px;padding:10px 16px;font-size:13px}
+.card b{font-size:18px;display:block}
+.small{font-size:12px;color:#555}
+td.r,th.r{text-align:right}
+.dayhdr{background:#dfe3f5;border-radius:6px;padding:4px 10px;font-weight:700;font-size:13px;margin:18px 0 6px}
+.fx{border-left:3px solid #3949ab;padding-left:10px;margin-bottom:14px}
+.fx.w-l{border-left-color:#ef6c00}.fx.f-l{border-left-color:#c62828}.fx.b-l{border-left-color:#9e9e9e}
+.btn{display:inline-block;background:#3949ab;color:#fff!important;padding:6px 14px;border-radius:6px;text-decoration:none;font-size:13px;border:0;cursor:pointer}
+.more{margin:8px 0 18px}
+select,input{padding:4px 8px;font-size:13px}
+</style></head><body>
+<h1>⚽ Football value-bet report — 2026-10-27</h1>
+<p class="small">Window: <b>2026-10-27 → 2026-10-30 (4 calendar days, Africa/Lusaka CAT)</b> · Generated 2026-10-27 10:21 CAT
+(2026-10-27 08:21 UTC) · Model: dc-elo-1.2@eca1515 — Dixon-Coles
+(time-decayed) blended with Elo · Every fixture verified before prediction.</p>
+<div class="card" style="display:inline-block;margin:4px">Now in Zambia (live clock)&nbsp;<b id="lvclock">…</b></div>
+<div class="card" style="display:inline-block;margin:4px">Report age&nbsp;<b id="lage">…</b></div>
+<div id="lvlive"></div>
+<p><button class="btn" onclick="location.reload()">↻ Refresh</button></p>
+<script>
+(function(){
+  var genUtc = new Date("2026-10-27T08:21:00Z");
+  function luParts(d){var f=new Intl.DateTimeFormat('en-CA',{timeZone:'Africa/Lusaka',
+    year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',
+    second:'2-digit',hour12:false});var p={};f.formatToParts(d).forEach(function(x){p[x.type]=x.value;});
+    return p;}
+  var opened=luParts(new Date()).year+'-'+luParts(new Date()).month+'-'+luParts(new Date()).day;
+  function tick(){
+    var p=luParts(new Date()), today=p.year+'-'+p.month+'-'+p.day;
+    var nm=fmtDayName(p);
+    document.getElementById('lvclock').textContent=p.hour+':'+p.minute+' CAT · '+nm;
+    if(genUtc){var age=(Date.now()-genUtc.getTime())/36e5;
+      var el=document.getElementById('lage');
+      el.textContent=age<1?'fresh this hour':age.toFixed(1)+'h';
+      if(age>26){el.style.color='#c62828';}}
+    // this is a DATED report; if the real Zambia date moved on, say so honestly
+    if(today!==opened){ setTimeout(function(){location.reload();},1500); return; }
+    if(today!=='2026-10-27'){
+      var b=document.getElementById('lvlive');
+      if(!b.innerHTML) b.innerHTML='<div class="warn" style="border-color:#ef5350;background:#ffebee">'+
+        '🕛 This is the report for <b>2026-10-27</b>, but it is now <b>'+today+
+        '</b> in Zambia. <a href="../index.html">Open today\u2019s page</a> (auto-updates daily).</div>';
+    } else {
+      document.getElementById('lvlive').innerHTML='';
+    }
+  }
+  function fmtDayName(p){return new Date(p.year+'-'+p.month+'-'+p.day+'T12:00:00Z')
+    .toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',
+    timeZone:'Africa/Lusaka'});}
+  tick(); setInterval(tick, 1000);
+})();
+</script>
+<a class="btn" href="https://github.com/mwanzajerry14-bit/soccer-value-bets/actions/workflows/daily.yml" target="_blank">↻ Run pipeline refresh now (GitHub sign-in)</a>
+<div class='demo'>⚠ BOOKMAKER PRICE FEED UNAVAILABLE TODAY: every attempt to download current odds from The Odds API failed (7 league call(s) - usually a rejected/expired API key). This report therefore contains fixtures and model probabilities only from already-tracked, previously verified data - NO new value-bet opinions are offered because EV requires a real current price. Nothing has been relabelled or invented. The feed resumes automatically as soon as the API key is fixed (see sync log on the admin page for the exact error).</div>
+
+
+    <div class="summary">
+      <div class="card">Fixtures in window<b>0</b></div>
+      <div class="card">With predictions<b>0</b></div>
+      <div class="card">Withheld (insufficient data)<b>0</b></div>
+      <div class="card">Verification failed<b>0</b></div>
+      <div class="card">Live / finished / removed<b>0</b></div>
+      <div class="card">Value bets (edge ≥ 5%)<b>0</b></div>
+      <div class="card">Total suggested stake<b>0.00</b></div>
+      <div class="card">Bankroll in config<b>1000</b></div>
+      <div class="card">Staking<b>¼ Kelly, cap 2%</b></div>
+    </div>
+<h2>Value bets</h2>
+<div class="warn"><b>No value bets in this window.</b> This is normal and honest: value is rare. Do not lower the threshold just to have action.</div>
+<h2>🎯 Over-goals strategy - ranked selections</h2>
+<p class="small">Your preferred markets, evaluated independently for every verified
+upcoming fixture. Ranking rule (documented): confidence tier → calibrated model
+probability → data completeness → evidence quality. <b>EV never determines rank.</b>
+A match strong on Over 2.5 need not qualify for Over 3.5.</p>
+<h3 style="margin-top:6px">TABLE A — BEST OVER 2.5 GOALS SELECTIONS</h3>
+<div class='warn'><b>TABLE A: no eligible Over 2.5 selections published.</b> The system does not force a daily shortlist - insufficient data or failed verification means no entry.</div>
+<h3>TABLE B — BEST OVER 3.5 GOALS SELECTIONS</h3>
+<div class='warn'><b>TABLE B: no eligible Over 3.5 selections published.</b> The system does not force a daily shortlist - insufficient data or failed verification means no entry.</div>
+<p class="small">Edge = model probability − consensus fair probability (each bookmaker de-vigged, then
+averaged). EV = p × best price − 1, computed ONLY when a real, current bookmaker price exists.
+Positive estimated EV depends on the model being well calibrated and does NOT guarantee profit -
+calibration is measured on <a href="../results.html">results.html</a>. Confidence = data-completeness
++ model-agreement tier (rule published in README - it is NOT an accuracy claim). Stake =
+¼ Kelly capped at 2% of bankroll. Bookmaker margin (overround) shown per market.</p>
+
+<div class="small" style="margin:6px 0">
+  🔎 <input id="fq" placeholder="team / league / keyword…" oninput="fxFilter()" style="width:200px">
+  📅 <select id="fd" onchange="fxFilter()"><option value=''>all days</option><option value='0'>Today</option><option value='1'>Tomorrow</option><option value='2'>In 2 days</option><option value='3'>In 3 days</option></select>
+  🌍 <select id="fc" onchange="fxFilter()"><option value=''>all countries</option></select>
+  🏆 <select id="fl" onchange="fxFilter()"><option value=''>all competitions</option></select>
+  🎯 <select id="fm" onchange="fxFilter()"><option value=''>all markets</option>
+     <option>1X2</option><option>OU15</option><option>OU25</option><option>OU35</option>
+     <option>BTTS</option><option>DC</option></select>
+  ✓ <select id="fs" onchange="fxFilter()"><option value=''>any status</option>
+     <option value='verified'>verified only</option>
+     <option value='not-verified'>withheld / failed only</option></select>
+</div>
+<h2>✅ Verified upcoming fixtures with predictions (0)</h2><div class='pag' id='predCards'><p class='small'>No published predictions in this window.</p></div><h2>⚠️ Verified fixtures — prediction withheld (0)</h2><p class='small'>These matches are verified as real and upcoming, but the system refuses to fabricate a prediction (usually: one/both teams have no history in the training window, or bookmaker prices are not available yet). They may gain predictions on a later run once prices appear.</p><p class='small'>none - every verified fixture earned a prediction.</p><h2>⛔ Verification failed (0)</h2><p class='small'>none.</p><details><summary><b>Not upcoming — live / finished / removed (0)</b> (never presented as upcoming)</summary><p class='small'>none.</p></details>
+
+<hr><p class="small">Predictions are probabilistic estimates only — no outcome is guaranteed; betting
+involves real risk. Only pre-match snapshots are used for grading; predictions made after kickoff
+would be invalid and are never created here. Result tracking, calibration, Brier/log-loss:
+see results.html · Ops: admin.html.</p>
+<script>
+function fxFilter(){
+  var q=document.getElementById('fq').value.toLowerCase();
+  var d=document.getElementById('fd').value, c=document.getElementById('fc').value,
+      l=document.getElementById('fl').value, m=document.getElementById('fm').value,
+      s=document.getElementById('fs').value;
+  var filtered = q||d||c||l||m||s;
+  document.querySelectorAll('.fx').forEach(function(x){
+    var ok=(x.getAttribute('data-q').toLowerCase().includes(q))
+      &&(!d||x.getAttribute('data-day')==d)
+      &&(!c||x.getAttribute('data-country')==c)
+      &&(!l||x.getAttribute('data-league')==l)
+      &&(!m||(x.getAttribute('data-markets')||'').split(' ').includes(m))
+      &&(!s||x.getAttribute('data-verify')==s);
+    x.style.display=ok?'':'none'; x.dataset.filt=ok?'1':'';
+  });
+  if(filtered){document.querySelectorAll('.pag .morebtn').forEach(function(b){b.style.display='none'});
+    document.querySelectorAll('.fx[data-filt="1"]').forEach(function(x){x.style.display='';});}
+  else{setupPags();}
+}
+function setupPags(){
+  document.querySelectorAll('.pag').forEach(function(pg){
+    var kids=[].slice.call(pg.querySelectorAll(':scope > .fx, :scope > table > tr.pagrow, :scope > table tr.pagrow'));
+    kids=kids.filter(function(k){return k.querySelectorAll('th').length===0;});
+    var per=12, btn=pg.nextSibling;
+    if(!btn||!btn.classList||!btn.classList.contains('morebtn')){
+      btn=document.createElement('button');btn.className='btn morebtn more';
+      pg.parentNode.insertBefore(btn, pg.nextSibling);
+      btn.onclick=function(){pg.dataset.shown=(+pg.dataset.shown)+per;applyPag(pg);};
+    }
+    pg.dataset.shown=per; applyPag(pg);
+  });
+}
+function applyPag(pg){
+  var kids=[].slice.call(pg.querySelectorAll('tr.pagrow, .fx'));
+  kids=kids.filter(function(k){return k.querySelectorAll('th').length===0;});
+  var shown=+pg.dataset.shown||12, hidden=0;
+  kids.forEach(function(k,i){k.style.display=i<shown?'':'none';if(i>=shown)hidden++;});
+  var btn=pg.parentNode.querySelector('.morebtn');
+  if(btn){btn.textContent='Show more ('+hidden+' remaining)';btn.style.display=hidden?'':'none';}
+}
+setupPags();
+</script>
+</body></html>
