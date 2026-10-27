@@ -333,7 +333,11 @@ def main() -> None:
     counts = {"predicted": 0, "withheld": 0, "failed": 0, "blocked": 0}
     summary_extra: list[str] = []
 
+    feed_health = {"odds_ok": 0, "odds_fail": 0}
+
     def sync_ctx(source, endpoint, ok, detail="", quota=None):
+        if source == "the-odds-api" and str(endpoint).startswith("odds/"):
+            feed_health["odds_ok" if ok else "odds_fail"] += 1
         with db.conn() as c:
             db.log_sync(c, source, endpoint, ok, detail, quota)
 
@@ -747,6 +751,18 @@ def main() -> None:
 
         log(f"  window fixtures: {counts} | value bets so far: {len(league_picks)}"
             + (" (SUSPEND mode: not recorded)" if susp else ""))
+
+    if (not demo and any(l.get("enabled") and l.get("odds_api") for l in leagues or [])
+            and feed_health["odds_ok"] == 0):
+        summary_extra.append(
+            "⚠ BOOKMAKER PRICE FEED UNAVAILABLE TODAY: every attempt to download "
+            f"current odds from The Odds API failed ({feed_health['odds_fail']} league "
+            "call(s) - usually a rejected/expired API key). This report therefore "
+            "contains fixtures and model probabilities only from already-tracked, "
+            "previously verified data - NO new value-bet opinions are offered because "
+            "EV requires a real current price. Nothing has been relabelled or invented. "
+            "The feed resumes automatically as soon as the API key is fixed "
+            "(see sync log on the admin page for the exact error).")
 
     if susp:
         summary_extra.append("PREDICTIONS SUSPENDED by administrator "

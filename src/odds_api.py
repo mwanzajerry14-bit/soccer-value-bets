@@ -16,6 +16,19 @@ from .util import http_get
 BASE = "https://api.the-odds-api.com/v4"
 
 
+class OddsAuthError(RuntimeError):
+    """The Odds API rejected the key (HTTP 401).
+
+    Deliberately a plain Exception (NOT SystemExit): every call site in the
+    pipeline already catches Exception, logs the failure to sync_log and
+    continues with the other data sources. A SystemExit used to bypass all
+    of those guards and kill the whole day's run (observed live 2026-10-27:
+    no report was generated at all). With this error type a 401 degrades
+    the run to 'fixtures + model only, no value-bet opinions' and the report
+    carries an explicit warning - nothing is ever silently skipped.
+    """
+
+
 class OddsApi:
     def __init__(self, key: str):
         self.key = key
@@ -26,7 +39,9 @@ class OddsApi:
         self.last_remaining = r.headers.get("x-requests-remaining")
         self.last_used = r.headers.get("x-requests-used")
         if r.status_code == 401:
-            raise SystemExit("The Odds API: 401 unauthorised - check ODDS_API_KEY in .env")
+            raise OddsAuthError(
+                "The Odds API 401: key rejected (invalid/regenerated or quota "
+                "exhausted) - check the ODDS_API_KEY secret")
         if r.status_code != 200:
             raise RuntimeError(f"Odds API {path} -> {r.status_code}: {r.text[:200]}")
         return r.json()

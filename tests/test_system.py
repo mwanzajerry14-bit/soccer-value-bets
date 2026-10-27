@@ -604,3 +604,50 @@ class TestAutoDating:
         assert data["lusaka_today"] == day
         assert data["window4"][0] == day
         assert data["window4"][3] == (lusaka_today() + timedelta(days=3)).isoformat()
+
+
+class TestOddsFeedOutage:
+    """Regression for 2026-10-27 outage: The Odds API returned 401 and the
+    SystemExit killed the ENTIRE daily run (no report at all). The 401 must
+    now degrade gracefully: other sources continue, report still builds,
+    and the failure is logged/visible - never silent."""
+
+    def test_401_raises_catchable_exception_not_systemexit(self):
+        from src.odds_api import OddsApi, OddsAuthError
+        import src.odds_api as oa
+
+        class Resp:
+            status_code = 401
+            headers = {}
+            text = "unauthorized"
+        oa.http_get, orig = lambda *a, **k: Resp(), oa.http_get
+        try:
+            with pytest.raises(OddsAuthError):   # plain Exception, NOT SystemExit
+                OddsApi("bad-key").league_scores("soccer_epl")
+        finally:
+            oa.http_get = orig
+        assert issubclass(OddsAuthError, Exception)
+        assert not issubclass(OddsAuthError, SystemExit)
+
+    def test_league_events_survive_odds_auth_outage(self):
+        from run_daily import build_league_events
+        from src.odds_api import OddsAuthError
+
+        class DeadApi:
+            last_remaining = None
+            def league_odds(self, *a, **k):
+                raise OddsAuthError("outage")
+
+        class M:                       # matcher stub
+            def match(self, _name):
+                return None
+
+        logs = []
+        cfg = {"odds_api": {"exclude_books": [], "markets_core": ["h2h"],
+                            "regions": "eu", "quota_guard_remaining": 0}}
+        league = {"name": "Test League", "odds_api": "test", "tier": "core"}
+        events, unmatched = build_league_events(
+            cfg, league, set(), "2026-10-27", DeadApi(), None, [], M(),
+            lambda src, ep, ok, detail="", q=None: logs.append((src, ep, ok)))
+        assert events == {}                    # no invented fixtures
+        assert logs == [("the-odds-api", "odds/test", False)]   # failure LOGGED

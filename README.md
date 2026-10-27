@@ -421,3 +421,14 @@ or the last build:
 Cause of the old bug: a static redirect page pointing at one dated file baked
 at 06:30 CAT - nothing knew the current date between builds. Fixed by making
 the date client-computed everywhere and cache-busting every fetch.
+
+## Feed-outage resilience (27 Oct 2026 fix)
+
+If The Odds API rejects the key (HTTP 401 - key regenerated or quota event),
+the run NO LONGER dies: `OddsAuthError` is a plain Exception caught by every
+existing per-league guard. The report still builds from already-tracked,
+previously verified fixtures plus model probabilities, with a loud
+"BOOKMAKER PRICE FEED UNAVAILABLE" notice - and ZERO new value-bet opinions
+(EV requires a real current price). Nothing is relabelled or invented; the
+sync log + admin page show the exact error, and the feed resumes
+automatically once the ODDS_API_KEY secret is corrected.
