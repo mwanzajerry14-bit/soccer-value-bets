@@ -4,7 +4,7 @@ on:
   schedule:
     # every 6 hours: 00:17 / 06:17 / 12:17 / 18:17 UTC (= +2h CAT)
     # automatic refresh of fixture status + results without spending odds quota
-    - cron: "17 */6 * * *"
+    - cron: "42 3,15 * * *"   # 05:42 + 17:42 CAT — 2x/day (free-quota conservation 2026-10-27)
   workflow_dispatch:
 
 concurrency:

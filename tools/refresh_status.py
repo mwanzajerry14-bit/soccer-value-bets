@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Light status refresh - runs every 6h on its OWN workflow.
+"""Light status refresh - runs twice daily (05:42 & 17:42 CAT) on its OWN workflow.
 
 Uses ONLY free endpoints that don't consume the monthly odds quota:
   - The Odds API /scores (free per provider docs): live/completed status
@@ -35,9 +35,13 @@ def main() -> None:
     leagues = [l for l in cfg["leagues"] if l.get("enabled") and l.get("odds_api")]
     with db.conn() as c:
         for l in leagues:
-            # only leagues with tracked fixtures near 'now' need a scores poll
+            # only leagues with fixtures still needing a status change near
+            # 'now' need a scores poll (completed fixtures are done for good -
+            # polling them again is the main source of quota waste)
             near = c.execute(
-                "SELECT COUNT(*) n FROM fixtures WHERE league=? AND date BETWEEN ? AND ?",
+                """SELECT COUNT(*) n FROM fixtures WHERE league=?
+                     AND date BETWEEN ? AND ?
+                     AND status IN ('scheduled','live')""",
                 (l["name"], (today - timedelta(days=3)).isoformat(),
                  (today + timedelta(days=1)).isoformat())).fetchone()["n"]
             if not near:

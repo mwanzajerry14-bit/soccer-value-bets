@@ -432,3 +432,16 @@ previously verified fixtures plus model probabilities, with a loud
 (EV requires a real current price). Nothing is relabelled or invented; the
 sync log + admin page show the exact error, and the feed resumes
 automatically once the ODDS_API_KEY secret is corrected.
+
+## Free-quota conservation (27 Oct 2026)
+
+Free plan = 500 credits/month; steady burn was ~56/day (morning report ~28 +
+four 6-hourly refreshes x7). Changes now in force:
+- status refresh runs **twice daily** (05:42 & 17:42 CAT) instead of 4x/day
+- a refresh polls /scores ONLY for leagues that have fixtures still able to
+  change status (scheduled/live) within the -3d..+1d window - completed
+  fixtures are never repolled
+- existing quota_guard_remaining (40) keeps protecting extended-tier markets
+Net effect: 500 credits stretch to ~12+ days of full operation monthly; when
+exhausted, the run degrades gracefully (fixtures+predictions continue, value
+bets pause with a visible warning) until the 1st-of-month refill, 02:00 CAT.
