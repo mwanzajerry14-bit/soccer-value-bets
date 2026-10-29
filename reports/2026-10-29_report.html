@@ -1,0 +1,162 @@
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<meta http-equiv="refresh" content="7200">
+<title>Value bets — 2026-10-29</title><style>
+body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:1100px;margin:24px auto;padding:0 16px;color:#1a1a2e}
+h1{font-size:22px}h2{font-size:17px;margin-top:28px;border-bottom:2px solid #3949ab;padding-bottom:4px}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0}
+th{background:#3949ab;color:#fff;padding:6px 8px;text-align:left}
+td{border-bottom:1px solid #e3e3ee;padding:5px 8px}
+tr.v td{background:#e8f5e9}
+.badge{background:#2e7d32;color:#fff;border-radius:4px;padding:1px 6px;font-size:11px}
+.chip{display:inline-block;background:#eef0fb;border:1px solid #cfd5f2;border-radius:10px;padding:1px 8px;font-size:11px;margin-right:4px}
+.fid{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;color:#777}
+.warn{background:#fff8e1;border:1px solid #ffe082;padding:10px 14px;border-radius:6px;font-size:13px;margin:12px 0}
+.demo{background:#ffebee;border:1px solid #ef5350;padding:12px;border-radius:6px;font-weight:600}
+.summary{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0}
+.card{background:#f4f6ff;border:1px solid #dfe3f5;border-radius:8px;padding:10px 16px;font-size:13px}
+.card b{font-size:18px;display:block}
+.small{font-size:12px;color:#555}
+td.r,th.r{text-align:right}
+.dayhdr{background:#dfe3f5;border-radius:6px;padding:4px 10px;font-weight:700;font-size:13px;margin:18px 0 6px}
+.fx{border-left:3px solid #3949ab;padding-left:10px;margin-bottom:14px}
+.fx.w-l{border-left-color:#ef6c00}.fx.f-l{border-left-color:#c62828}.fx.b-l{border-left-color:#9e9e9e}
+.btn{display:inline-block;background:#3949ab;color:#fff!important;padding:6px 14px;border-radius:6px;text-decoration:none;font-size:13px;border:0;cursor:pointer}
+.more{margin:8px 0 18px}
+select,input{padding:4px 8px;font-size:13px}
+</style></head><body>
+<h1>⚽ Football value-bet report — 2026-10-29</h1>
+<p class="small">Window: <b>2026-10-29 → 2026-11-01 (4 calendar days, Africa/Lusaka CAT)</b> · Generated 2026-10-29 13:01 CAT
+(2026-10-29 11:01 UTC) · Model: dc-elo-1.2@cc01f41 — Dixon-Coles
+(time-decayed) blended with Elo · Every fixture verified before prediction.</p>
+<div class="card" style="display:inline-block;margin:4px">Now in Zambia (live clock)&nbsp;<b id="lvclock">…</b></div>
+<div class="card" style="display:inline-block;margin:4px">Report age&nbsp;<b id="lage">…</b></div>
+<div id="lvlive"></div>
+<p><button class="btn" onclick="location.reload()">↻ Refresh</button></p>
+<script>
+(function(){
+  var genUtc = new Date("2026-10-29T11:01:00Z");
+  function luParts(d){var f=new Intl.DateTimeFormat('en-CA',{timeZone:'Africa/Lusaka',
+    year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',
+    second:'2-digit',hour12:false});var p={};f.formatToParts(d).forEach(function(x){p[x.type]=x.value;});
+    return p;}
+  var opened=luParts(new Date()).year+'-'+luParts(new Date()).month+'-'+luParts(new Date()).day;
+  function tick(){
+    var p=luParts(new Date()), today=p.year+'-'+p.month+'-'+p.day;
+    var nm=fmtDayName(p);
+    document.getElementById('lvclock').textContent=p.hour+':'+p.minute+' CAT · '+nm;
+    if(genUtc){var age=(Date.now()-genUtc.getTime())/36e5;
+      var el=document.getElementById('lage');
+      el.textContent=age<1?'fresh this hour':age.toFixed(1)+'h';
+      if(age>26){el.style.color='#c62828';}}
+    // this is a DATED report; if the real Zambia date moved on, say so honestly
+    if(today!==opened){ setTimeout(function(){location.reload();},1500); return; }
+    if(today!=='2026-10-29'){
+      var b=document.getElementById('lvlive');
+      if(!b.innerHTML) b.innerHTML='<div class="warn" style="border-color:#ef5350;background:#ffebee">'+
+        '🕛 This is the report for <b>2026-10-29</b>, but it is now <b>'+today+
+        '</b> in Zambia. <a href="../index.html">Open today\u2019s page</a> (auto-updates daily).</div>';
+    } else {
+      document.getElementById('lvlive').innerHTML='';
+    }
+  }
+  function fmtDayName(p){return new Date(p.year+'-'+p.month+'-'+p.day+'T12:00:00Z')
+    .toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',
+    timeZone:'Africa/Lusaka'});}
+  tick(); setInterval(tick, 1000);
+})();
+</script>
+<a class="btn" href="https://github.com/mwanzajerry14-bit/soccer-value-bets/actions/workflows/daily.yml" target="_blank">↻ Run pipeline refresh now (GitHub sign-in)</a>
+<div class='demo'>⚠ BOOKMAKER PRICE FEED UNAVAILABLE TODAY: every attempt to download current odds from The Odds API failed (7 league call(s) - usually a rejected/expired API key). This report therefore contains fixtures and model probabilities only from already-tracked, previously verified data - NO new value-bet opinions are offered because EV requires a real current price. Nothing has been relabelled or invented. The feed resumes automatically as soon as the API key is fixed (see sync log on the admin page for the exact error).</div>
+
+
+    <div class="summary">
+      <div class="card">Fixtures in window<b>0</b></div>
+      <div class="card">With predictions<b>0</b></div>
+      <div class="card">Withheld (insufficient data)<b>0</b></div>
+      <div class="card">Verification failed<b>0</b></div>
+      <div class="card">Live / finished / removed<b>0</b></div>
+      <div class="card">Value bets (edge ≥ 5%)<b>0</b></div>
+      <div class="card">Total suggested stake<b>0.00</b></div>
+      <div class="card">Bankroll in config<b>1000</b></div>
+      <div class="card">Staking<b>¼ Kelly, cap 2%</b></div>
+    </div>
+<h2>Value bets</h2>
+<div class="warn"><b>No value bets in this window.</b> This is normal and honest: value is rare. Do not lower the threshold just to have action.</div>
+<h2>🎯 Over-goals strategy - ranked selections</h2>
+<p class="small">Your preferred markets, evaluated independently for every verified
+upcoming fixture. Ranking rule (documented): confidence tier → calibrated model
+probability → data completeness → evidence quality. <b>EV never determines rank.</b>
+A match strong on Over 2.5 need not qualify for Over 3.5.</p>
+<h3 style="margin-top:6px">TABLE A — BEST OVER 2.5 GOALS SELECTIONS</h3>
+<div class='warn'><b>TABLE A: no eligible Over 2.5 selections published.</b> The system does not force a daily shortlist - insufficient data or failed verification means no entry.</div>
+<h3>TABLE B — BEST OVER 3.5 GOALS SELECTIONS</h3>
+<div class='warn'><b>TABLE B: no eligible Over 3.5 selections published.</b> The system does not force a daily shortlist - insufficient data or failed verification means no entry.</div>
+<p class="small">Edge = model probability − consensus fair probability (each bookmaker de-vigged, then
+averaged). EV = p × best price − 1, computed ONLY when a real, current bookmaker price exists.
+Positive estimated EV depends on the model being well calibrated and does NOT guarantee profit -
+calibration is measured on <a href="../results.html">results.html</a>. Confidence = data-completeness
++ model-agreement tier (rule published in README - it is NOT an accuracy claim). Stake =
+¼ Kelly capped at 2% of bankroll. Bookmaker margin (overround) shown per market.</p>
+
+<div class="small" style="margin:6px 0">
+  🔎 <input id="fq" placeholder="team / league / keyword…" oninput="fxFilter()" style="width:200px">
+  📅 <select id="fd" onchange="fxFilter()"><option value=''>all days</option><option value='0'>Today</option><option value='1'>Tomorrow</option><option value='2'>In 2 days</option><option value='3'>In 3 days</option></select>
+  🌍 <select id="fc" onchange="fxFilter()"><option value=''>all countries</option></select>
+  🏆 <select id="fl" onchange="fxFilter()"><option value=''>all competitions</option></select>
+  🎯 <select id="fm" onchange="fxFilter()"><option value=''>all markets</option>
+     <option>1X2</option><option>OU15</option><option>OU25</option><option>OU35</option>
+     <option>BTTS</option><option>DC</option></select>
+  ✓ <select id="fs" onchange="fxFilter()"><option value=''>any status</option>
+     <option value='verified'>verified only</option>
+     <option value='not-verified'>withheld / failed only</option></select>
+</div>
+<h2>✅ Verified upcoming fixtures with predictions (0)</h2><div class='pag' id='predCards'><p class='small'>No published predictions in this window.</p></div><h2>⚠️ Verified fixtures — prediction withheld (0)</h2><p class='small'>These matches are verified as real and upcoming, but the system refuses to fabricate a prediction (usually: one/both teams have no history in the training window, or bookmaker prices are not available yet). They may gain predictions on a later run once prices appear.</p><p class='small'>none - every verified fixture earned a prediction.</p><h2>⛔ Verification failed (0)</h2><p class='small'>none.</p><details><summary><b>Not upcoming — live / finished / removed (0)</b> (never presented as upcoming)</summary><p class='small'>none.</p></details>
+<h2>Skipped / unmatched / integrity notes</h2><div class='warn'>England Premier League: fixture the-odds-api:6601f69175a02f03fb7065aacb538e01 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>England Premier League: fixture the-odds-api:a6c06eabdf4e6710354b6098d39449e7 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>England Premier League: fixture the-odds-api:b9254b648ca25ce7831988b53ed17c3c (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>England Premier League: fixture the-odds-api:7df53f9af95d5a4e13b504882078dab8 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>England Premier League: fixture the-odds-api:d20fbb0cd5ad9369b8ed6f2c4a198619 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>England Premier League: fixture the-odds-api:1ec76c009147b63859f68c6b5a1dd77b (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>England Premier League: fixture the-odds-api:01b17432a283eb27af86ae45602eb6dd (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>England Premier League: fixture the-odds-api:640c52a86289f35698261b41987dd71e (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>England Premier League: fixture the-odds-api:6a3819cdbe2ba2fe5a3d8f9b4b459965 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Spain La Liga: fixture the-odds-api:00b03cb40c27ed23e2ecb18f062a5122 (2026-10-30) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Spain La Liga: fixture the-odds-api:005711684f3e51024ac40c1ee69978e9 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Spain La Liga: fixture the-odds-api:77383723574e3d39c7aba22eec6c4ce3 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Spain La Liga: fixture the-odds-api:8f0b7ef29a47f675429758e83a426d7e (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Spain La Liga: fixture the-odds-api:2db2b55e71574a19ff0557898d3e9933 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Spain La Liga: fixture the-odds-api:ddcc9a51a2d7368e055d1abefacdb74e (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Spain La Liga: fixture the-odds-api:6c520ed959578ca3aebe351ee3765d53 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Spain La Liga: fixture the-odds-api:5262991e389930615bec34b642428c93 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Spain La Liga: fixture the-odds-api:3757bcd765c7da1538cdf2785e784038 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Italy Serie A: fixture the-odds-api:667cf69986b200753742c90cb9c5126c (2026-10-29) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Italy Serie A: fixture the-odds-api:da159a6b84dbb548b4d7b94c722caac5 (2026-10-29) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Italy Serie A: fixture the-odds-api:04aa939b89001eedf55668e66c74836e (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Italy Serie A: fixture the-odds-api:34cd26b96f78bd7aa3dbff3d1daca7a7 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Italy Serie A: fixture the-odds-api:e82f25e981f2ebc731cfaf5716231af5 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Italy Serie A: fixture the-odds-api:9507f4bcbcfd4e4953720628a2b86a17 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Italy Serie A: fixture the-odds-api:3f9f4bc9a19bf36dcb74be2f29610d55 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Italy Serie A: fixture the-odds-api:b7b781db85506536dce5e7ce59a59863 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Italy Serie A: fixture the-odds-api:940b9e69539033539039f9af694e2925 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Italy Serie A: fixture the-odds-api:aeadf1388a1075328536501576b3d550 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Germany Bundesliga: fixture the-odds-api:b275fe870ec88a9f0054c9220beb2673 (2026-10-30) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Germany Bundesliga: fixture the-odds-api:24400b6372faf9f4996cd5704d707374 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Germany Bundesliga: fixture the-odds-api:a7ba9b844f121a4a8777d87b1f863137 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Germany Bundesliga: fixture the-odds-api:aecb9d8c01176616c87d893bee4bc0de (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Germany Bundesliga: fixture the-odds-api:3966f2fe1c2f73bfa12e61db83bd0bf9 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Germany Bundesliga: fixture the-odds-api:2fad25b09c01b71e47a5b0fd1d0b4e61 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Germany Bundesliga: fixture the-odds-api:bad7337b335a16859b1db6b8e6cf6ca5 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Germany Bundesliga: fixture the-odds-api:60eaeb599578cd5c951f917c4fef06ff (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Germany Bundesliga: fixture the-odds-api:1eb5e1a69ae9dd9edd92fde344308a4e (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>France Ligue 1: fixture the-odds-api:9a9f6c78276f74f15f42b013b033aa5d (2026-10-30) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>France Ligue 1: fixture the-odds-api:7932d9a82dcdb164a3e4ef5e03694ee3 (2026-10-30) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>France Ligue 1: fixture the-odds-api:a547720e6b4661d6319c4f11dbdf8e1f (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>France Ligue 1: fixture the-odds-api:961df571fad52d969150e9ced52b16f7 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>France Ligue 1: fixture the-odds-api:c1a1e850def721bbfc43ff80c133a5e6 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>France Ligue 1: fixture the-odds-api:75cf0c0e471877a0bfa95d689d0f0325 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>France Ligue 1: fixture the-odds-api:448a1083448ea9dff55bfebf15ff20b4 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>France Ligue 1: fixture the-odds-api:cf3a2e2b4a4e9815d1d0be8dcef916da (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>France Ligue 1: fixture the-odds-api:df1e1589c51bbcac432125567d1f7c58 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Netherlands Eredivisie: fixture the-odds-api:1836e9e3241ea98ae062bab0f288ce2c (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Netherlands Eredivisie: fixture the-odds-api:c27c8af8c7ee29d153de0b9999ea0434 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Netherlands Eredivisie: fixture the-odds-api:49a7de86105dbc67bec3e1390c7bcbb3 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Netherlands Eredivisie: fixture the-odds-api:43ebf45469e32887fe9caff703c94ae6 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Netherlands Eredivisie: fixture the-odds-api:314c3b27fe569849986fdd2d013d1aca (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Netherlands Eredivisie: fixture the-odds-api:016bdfefaa570d0fcaeffc5a1cb3625f (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Netherlands Eredivisie: fixture the-odds-api:c0c32575c239ac72913af247ce084ea2 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Netherlands Eredivisie: fixture the-odds-api:d7d5552edc5c81a14b6933537ba2043c (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Netherlands Eredivisie: fixture the-odds-api:961d9c9f07b1f911e211cd6a750cddba (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Portugal Primeira Liga: fixture the-odds-api:75daf3f21fd7945dcc4215b1fe8a5da3 (2026-10-30) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Portugal Primeira Liga: fixture the-odds-api:853df01a49c2a57a62c1ac2d356b395b (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Portugal Primeira Liga: fixture the-odds-api:60352ce6c1b34bca7b294edae8aa388b (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Portugal Primeira Liga: fixture the-odds-api:fd5c6a92f2448c1cfe7a2d9b8075172b (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Portugal Primeira Liga: fixture the-odds-api:ce5c2cbdf5db2a13f40f528d3e5044b9 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Portugal Primeira Liga: fixture the-odds-api:6bf5102547eb3f3eb74023133e27d2d3 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Portugal Primeira Liga: fixture the-odds-api:12fa9f636dbb126cfd4118fa8cdc8fad (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Belgium Pro League: fixture the-odds-api:2dd4ff7c9aef0d27f3f30acf413dfa8b (2026-10-30) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Belgium Pro League: fixture the-odds-api:9fb8dd0ab3ee4bfa1fa3245fec81db1a (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Belgium Pro League: fixture the-odds-api:f1880fd6746a6232fe1ac7ff5fac67e6 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Belgium Pro League: fixture the-odds-api:d8134f341b5464b458a313342d178d43 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Belgium Pro League: fixture the-odds-api:58c68450fcf69bf88e944dd7177f9104 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Belgium Pro League: fixture the-odds-api:bd4ba46dc8bfef216d15545226910409 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Belgium Pro League: fixture the-odds-api:480129a4d8e611170372498cd60e69d2 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Belgium Pro League: fixture the-odds-api:81d52c9bdfaaa5eacaadb9245bc2d883 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Belgium Pro League: fixture the-odds-api:ed2ef578ae4e95bdcd81e662dfec5381 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Turkey Super Lig: fixture the-odds-api:feb03ec355aa5c94e0d7ae612a59b813 (2026-10-30) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Turkey Super Lig: fixture the-odds-api:7ef8c62daf5d4e448691625fb8c2de1b (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Turkey Super Lig: fixture the-odds-api:7d597f0fe7ec1c85b6e7f9f2ce731746 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Turkey Super Lig: fixture the-odds-api:dc20aff5555a04cd21c2355e222a3297 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Turkey Super Lig: fixture the-odds-api:5706f8b2f4d8a94519bbea0efc91e36b (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Turkey Super Lig: fixture the-odds-api:f4e049de3ce6858d46dd45ab5cfa0e8c (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Turkey Super Lig: fixture the-odds-api:cd2960ff2b4d605144a83562b0085400 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Turkey Super Lig: fixture the-odds-api:bf609ced8c6472e7d11428e42a2e468e (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Scotland Premiership: fixture the-odds-api:6b00f2d0e65fbbdaf9dc53741d0447c5 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Scotland Premiership: fixture the-odds-api:2626c07eae859f2bb05066923d619e31 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Scotland Premiership: fixture the-odds-api:0a5fbad634ee46619955b5245f996cf7 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Scotland Premiership: fixture the-odds-api:7d7c62351dea96670f8dd3b7bdc3ff12 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Greece Super League: fixture the-odds-api:a4fba95f526ee3358bbfb4bc068da479 (2026-10-31) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Greece Super League: fixture the-odds-api:1dfaf78cefd493b8a16bf4432b5ab265 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Greece Super League: fixture the-odds-api:ddf34214255ae2add9e6b1341df87729 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Greece Super League: fixture the-odds-api:d667b5fde5f4b69438bcb625ffa1d6f9 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review<br>Greece Super League: fixture the-odds-api:8cc1f5cb89a601a4faf8ae3f931c6f27 (2026-11-01) was in the feed but vanished - marked &#x27;removed&#x27; for review</div><p class='small'>Add aliases to src/teamnames.py (ALIASES) to fix team-name mapping issues.</p>
+<hr><p class="small">Predictions are probabilistic estimates only — no outcome is guaranteed; betting
+involves real risk. Only pre-match snapshots are used for grading; predictions made after kickoff
+would be invalid and are never created here. Result tracking, calibration, Brier/log-loss:
+see results.html · Ops: admin.html.</p>
+<script>
+function fxFilter(){
+  var q=document.getElementById('fq').value.toLowerCase();
+  var d=document.getElementById('fd').value, c=document.getElementById('fc').value,
+      l=document.getElementById('fl').value, m=document.getElementById('fm').value,
+      s=document.getElementById('fs').value;
+  var filtered = q||d||c||l||m||s;
+  document.querySelectorAll('.fx').forEach(function(x){
+    var ok=(x.getAttribute('data-q').toLowerCase().includes(q))
+      &&(!d||x.getAttribute('data-day')==d)
+      &&(!c||x.getAttribute('data-country')==c)
+      &&(!l||x.getAttribute('data-league')==l)
+      &&(!m||(x.getAttribute('data-markets')||'').split(' ').includes(m))
+      &&(!s||x.getAttribute('data-verify')==s);
+    x.style.display=ok?'':'none'; x.dataset.filt=ok?'1':'';
+  });
+  if(filtered){document.querySelectorAll('.pag .morebtn').forEach(function(b){b.style.display='none'});
+    document.querySelectorAll('.fx[data-filt="1"]').forEach(function(x){x.style.display='';});}
+  else{setupPags();}
+}
+function setupPags(){
+  document.querySelectorAll('.pag').forEach(function(pg){
+    var kids=[].slice.call(pg.querySelectorAll(':scope > .fx, :scope > table > tr.pagrow, :scope > table tr.pagrow'));
+    kids=kids.filter(function(k){return k.querySelectorAll('th').length===0;});
+    var per=12, btn=pg.nextSibling;
+    if(!btn||!btn.classList||!btn.classList.contains('morebtn')){
+      btn=document.createElement('button');btn.className='btn morebtn more';
+      pg.parentNode.insertBefore(btn, pg.nextSibling);
+      btn.onclick=function(){pg.dataset.shown=(+pg.dataset.shown)+per;applyPag(pg);};
+    }
+    pg.dataset.shown=per; applyPag(pg);
+  });
+}
+function applyPag(pg){
+  var kids=[].slice.call(pg.querySelectorAll('tr.pagrow, .fx'));
+  kids=kids.filter(function(k){return k.querySelectorAll('th').length===0;});
+  var shown=+pg.dataset.shown||12, hidden=0;
+  kids.forEach(function(k,i){k.style.display=i<shown?'':'none';if(i>=shown)hidden++;});
+  var btn=pg.parentNode.querySelector('.morebtn');
+  if(btn){btn.textContent='Show more ('+hidden+' remaining)';btn.style.display=hidden?'':'none';}
+}
+setupPags();
+</script>
+</body></html>
