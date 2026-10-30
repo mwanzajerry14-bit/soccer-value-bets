@@ -1,14 +1,14 @@
 {
- "generated_at_utc": "2026-10-29T20:34:44Z",
- "generated_at_cat": "29 Oct 2026, 22:34 CAT",
- "lusaka_today": "2026-10-29",
- "min_date": "2026-07-31",
- "max_date": "2026-11-08",
+ "generated_at_utc": "2026-10-30T10:27:18Z",
+ "generated_at_cat": "30 Oct 2026, 12:27 CAT",
+ "lusaka_today": "2026-10-30",
+ "min_date": "2026-08-01",
+ "max_date": "2026-11-09",
  "window4": [
-  "2026-10-29",
   "2026-10-30",
   "2026-10-31",
-  "2026-11-01"
+  "2026-11-01",
+  "2026-11-02"
  ],
  "days": {
   "2026-10-24": [
@@ -1617,8 +1617,8 @@
     "home": "Frosinone",
     "away": "Lecce",
     "kickoff": "19:30",
-    "status": "removed",
-    "score": null,
+    "status": "completed",
+    "score": "5-1",
     "verified": true,
     "completeness": 90.0,
     "pub": "excluded-status",
@@ -1635,8 +1635,8 @@
     "home": "Fiorentina",
     "away": "Atalanta",
     "kickoff": "21:45",
-    "status": "removed",
-    "score": null,
+    "status": "completed",
+    "score": "2-2",
     "verified": true,
     "completeness": 90.0,
     "pub": "excluded-status",
