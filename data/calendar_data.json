@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-11-01T09:05:26Z",
- "generated_at_cat": "01 Nov 2026, 11:05 CAT",
+ "generated_at_utc": "2026-11-01T10:47:55Z",
+ "generated_at_cat": "01 Nov 2026, 12:47 CAT",
  "lusaka_today": "2026-11-01",
  "min_date": "2026-08-03",
  "max_date": "2026-11-11",
@@ -2541,7 +2541,7 @@
     "home": "Amed",
     "away": "Eyupspor",
     "kickoff": "12:30",
-    "status": "scheduled",
+    "status": "live",
     "score": null,
     "verified": false,
     "completeness": 55.0,
