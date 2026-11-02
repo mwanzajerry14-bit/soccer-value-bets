@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-11-02T11:40:29Z",
- "generated_at_cat": "02 Nov 2026, 13:40 CAT",
+ "generated_at_utc": "2026-11-02T12:47:20Z",
+ "generated_at_cat": "02 Nov 2026, 14:47 CAT",
  "lusaka_today": "2026-11-02",
  "min_date": "2026-08-04",
  "max_date": "2026-11-12",
@@ -2592,14 +2592,14 @@
       "sel": "under",
       "odds": 3.07,
       "book": "Betsson",
-      "status": "pending"
+      "status": "won"
      },
      {
       "market": "1X2",
       "sel": "home",
       "odds": 1.37,
       "book": "1xBet",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -2661,14 +2661,14 @@
       "sel": "under",
       "odds": 1.5,
       "book": "Tipico",
-      "status": "pending"
+      "status": "lost"
      },
      {
       "market": "1X2",
       "sel": "home",
       "odds": 3.5,
       "book": "Tipico",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -2802,7 +2802,7 @@
       "sel": "under",
       "odds": 2.15,
       "book": "Tipico",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -2828,14 +2828,14 @@
       "sel": "home",
       "odds": 2.72,
       "book": "Pinnacle",
-      "status": "pending"
+      "status": "lost"
      },
      {
       "market": "OU25",
       "sel": "under",
       "odds": 2.25,
       "book": "LeoVegas (SE)",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -2915,7 +2915,7 @@
       "sel": "away",
       "odds": 5.7,
       "book": "Tipico",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -2941,7 +2941,7 @@
       "sel": "home",
       "odds": 1.83,
       "book": "Unibet (NL)",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -2985,7 +2985,7 @@
       "sel": "home",
       "odds": 6.0,
       "book": "Tipico",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -3029,7 +3029,7 @@
       "sel": "home",
       "odds": 2.53,
       "book": "Pinnacle",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -3055,14 +3055,14 @@
       "sel": "under",
       "odds": 1.98,
       "book": "1xBet",
-      "status": "pending"
+      "status": "won"
      },
      {
       "market": "1X2",
       "sel": "away",
       "odds": 2.59,
       "book": "Coolbet",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -3142,14 +3142,14 @@
       "sel": "home",
       "odds": 5.0,
       "book": "Unibet (SE)",
-      "status": "pending"
+      "status": "won"
      },
      {
       "market": "1X2",
       "sel": "draw",
       "odds": 4.06,
       "book": "Pinnacle",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -3265,7 +3265,7 @@
       "sel": "home",
       "odds": 1.98,
       "book": "Pinnacle",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -3291,14 +3291,14 @@
       "sel": "away",
       "odds": 3.5,
       "book": "Coolbet",
-      "status": "pending"
+      "status": "lost"
      },
      {
       "market": "OU25",
       "sel": "under",
       "odds": 1.93,
       "book": "Coolbet",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -3342,14 +3342,14 @@
       "sel": "away",
       "odds": 5.58,
       "book": "Pinnacle",
-      "status": "pending"
+      "status": "lost"
      },
      {
       "market": "OU25",
       "sel": "under",
       "odds": 1.85,
       "book": "Pinnacle",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    }
@@ -3428,12 +3428,20 @@
     "score": null,
     "verified": true,
     "completeness": 90.0,
-    "pub": "withheld",
-    "note": "Prediction withheld - model output failed validation: DC/1X2 inconsistency",
-    "o25": null,
+    "pub": "published",
+    "note": "",
+    "o25": 0.5911727687437721,
     "o35": null,
-    "conf": null,
-    "picks": []
+    "conf": "high",
+    "picks": [
+     {
+      "market": "1X2",
+      "sel": "home",
+      "odds": 2.95,
+      "book": "Coolbet",
+      "status": "pending"
+     }
+    ]
    },
    {
     "fid": "the-odds-api:5118966f484adf525196d196a61bc5d6",
@@ -3446,8 +3454,8 @@
     "score": null,
     "verified": true,
     "completeness": 90.0,
-    "pub": "published",
-    "note": "",
+    "pub": "withheld",
+    "note": "Prediction withheld - model output failed validation: DC/1X2 inconsistency",
     "o25": 0.4737294093738472,
     "o35": null,
     "conf": "high",
@@ -3474,7 +3482,7 @@
     "completeness": 90.0,
     "pub": "published",
     "note": "",
-    "o25": 0.408251085696895,
+    "o25": 0.4096082046578524,
     "o35": null,
     "conf": "high",
     "picks": [
@@ -3500,7 +3508,7 @@
     "completeness": 90.0,
     "pub": "published",
     "note": "",
-    "o25": 0.4971446453259622,
+    "o25": 0.5005606154960539,
     "o35": null,
     "conf": "high",
     "picks": [
@@ -3544,7 +3552,7 @@
     "completeness": 90.0,
     "pub": "published",
     "note": "",
-    "o25": 0.684521204245081,
+    "o25": 0.688817067758627,
     "o35": null,
     "conf": "high",
     "picks": []
@@ -4512,11 +4520,47 @@
     "picks": []
    },
    {
+    "fid": "the-odds-api:8a92794bd5f89b8b91b2d8fefdac7b85",
+    "league": "Belgium Pro League",
+    "country": "Belgium",
+    "home": "Club Brugge",
+    "away": "Anderlecht",
+    "kickoff": "14:30",
+    "status": "scheduled",
+    "score": null,
+    "verified": false,
+    "completeness": 0.0,
+    "pub": "",
+    "note": "",
+    "o25": null,
+    "o35": null,
+    "conf": null,
+    "picks": []
+   },
+   {
     "fid": "the-odds-api:c35673eb1e889309d6985c091a43a3f5",
     "league": "Spain La Liga",
     "country": "Spain",
     "home": "Elche",
     "away": "Real Betis",
+    "kickoff": "15:00",
+    "status": "scheduled",
+    "score": null,
+    "verified": false,
+    "completeness": 0.0,
+    "pub": "",
+    "note": "",
+    "o25": null,
+    "o35": null,
+    "conf": null,
+    "picks": []
+   },
+   {
+    "fid": "the-odds-api:6692a3ca274d09ffbfabd943320d62f5",
+    "league": "Turkey Super Lig",
+    "country": "Turkey",
+    "home": "Corum",
+    "away": "Fenerbahce",
     "kickoff": "15:00",
     "status": "scheduled",
     "score": null,
@@ -4692,6 +4736,24 @@
     "picks": []
    },
    {
+    "fid": "the-odds-api:16029fbb3d6ae79243c5650896bef095",
+    "league": "Belgium Pro League",
+    "country": "Belgium",
+    "home": "Gent",
+    "away": "Kortrijk",
+    "kickoff": "17:00",
+    "status": "scheduled",
+    "score": null,
+    "verified": false,
+    "completeness": 0.0,
+    "pub": "",
+    "note": "",
+    "o25": null,
+    "o35": null,
+    "conf": null,
+    "picks": []
+   },
+   {
     "fid": "the-odds-api:2674c9a72345391ad764db72e2532378",
     "league": "Greece Super League",
     "country": "Greece",
@@ -4782,6 +4844,60 @@
     "picks": []
    },
    {
+    "fid": "the-odds-api:88fe8a3db780908444b4b21229766ad5",
+    "league": "Portugal Primeira Liga",
+    "country": "Portugal",
+    "home": "Estoril",
+    "away": "Maritimo",
+    "kickoff": "17:30",
+    "status": "scheduled",
+    "score": null,
+    "verified": false,
+    "completeness": 0.0,
+    "pub": "",
+    "note": "",
+    "o25": null,
+    "o35": null,
+    "conf": null,
+    "picks": []
+   },
+   {
+    "fid": "the-odds-api:3145127655251c9de0251675640e2101",
+    "league": "Portugal Primeira Liga",
+    "country": "Portugal",
+    "home": "Santa Clara",
+    "away": "Gil Vicente",
+    "kickoff": "17:30",
+    "status": "scheduled",
+    "score": null,
+    "verified": false,
+    "completeness": 0.0,
+    "pub": "",
+    "note": "",
+    "o25": null,
+    "o35": null,
+    "conf": null,
+    "picks": []
+   },
+   {
+    "fid": "the-odds-api:a85eafd97e49ac329956fa1022be891d",
+    "league": "Turkey Super Lig",
+    "country": "Turkey",
+    "home": "Alanyaspor",
+    "away": "Trabzonspor",
+    "kickoff": "17:30",
+    "status": "scheduled",
+    "score": null,
+    "verified": false,
+    "completeness": 0.0,
+    "pub": "",
+    "note": "",
+    "o25": null,
+    "o35": null,
+    "conf": null,
+    "picks": []
+   },
+   {
     "fid": "the-odds-api:c22d673775e6a4dc0810cc88b0ed75ec",
     "league": "Netherlands Eredivisie",
     "country": "Netherlands",
@@ -4806,6 +4922,24 @@
     "home": "Cambuur",
     "away": "Psv Eindhoven",
     "kickoff": "17:45",
+    "status": "scheduled",
+    "score": null,
+    "verified": false,
+    "completeness": 0.0,
+    "pub": "",
+    "note": "",
+    "o25": null,
+    "o35": null,
+    "conf": null,
+    "picks": []
+   },
+   {
+    "fid": "the-odds-api:320cba0343e467f93a65a97da656413d",
+    "league": "Scotland Premiership",
+    "country": "Scotland",
+    "home": "Celtic",
+    "away": "Kilmarnock",
+    "kickoff": "18:00",
     "status": "scheduled",
     "score": null,
     "verified": false,
@@ -4962,6 +5096,24 @@
     "picks": []
    },
    {
+    "fid": "the-odds-api:3eb376e5f313e6d8e7ca8bb6556d0b29",
+    "league": "Belgium Pro League",
+    "country": "Belgium",
+    "home": "Union Saint Gilloise",
+    "away": "Genk",
+    "kickoff": "19:30",
+    "status": "scheduled",
+    "score": null,
+    "verified": false,
+    "completeness": 0.0,
+    "pub": "",
+    "note": "",
+    "o25": null,
+    "o35": null,
+    "conf": null,
+    "picks": []
+   },
+   {
     "fid": "the-odds-api:0d2e199bfba0db42871696c10037bad3",
     "league": "Spain La Liga",
     "country": "Spain",
@@ -4986,6 +5138,60 @@
     "home": "Villarreal",
     "away": "Getafe",
     "kickoff": "19:30",
+    "status": "scheduled",
+    "score": null,
+    "verified": false,
+    "completeness": 0.0,
+    "pub": "",
+    "note": "",
+    "o25": null,
+    "o35": null,
+    "conf": null,
+    "picks": []
+   },
+   {
+    "fid": "the-odds-api:c468a7bc1110c030b62f381e3a480145",
+    "league": "Portugal Primeira Liga",
+    "country": "Portugal",
+    "home": "Vitoria",
+    "away": "Porto",
+    "kickoff": "20:00",
+    "status": "scheduled",
+    "score": null,
+    "verified": false,
+    "completeness": 0.0,
+    "pub": "",
+    "note": "",
+    "o25": null,
+    "o35": null,
+    "conf": null,
+    "picks": []
+   },
+   {
+    "fid": "the-odds-api:1fa78d1150755a8ec1d24cc1e19eeb0a",
+    "league": "Turkey Super Lig",
+    "country": "Turkey",
+    "home": "Besiktas",
+    "away": "Genclerbirligi",
+    "kickoff": "20:00",
+    "status": "scheduled",
+    "score": null,
+    "verified": false,
+    "completeness": 0.0,
+    "pub": "",
+    "note": "",
+    "o25": null,
+    "o35": null,
+    "conf": null,
+    "picks": []
+   },
+   {
+    "fid": "the-odds-api:fceade9430abcb824182a6aa031880db",
+    "league": "Belgium Pro League",
+    "country": "Belgium",
+    "home": "St Truiden",
+    "away": "Zulte Waregem",
+    "kickoff": "20:15",
     "status": "scheduled",
     "score": null,
     "verified": false,
@@ -5094,6 +5300,42 @@
     "home": "Ath Madrid",
     "away": "Barcelona",
     "kickoff": "22:00",
+    "status": "scheduled",
+    "score": null,
+    "verified": false,
+    "completeness": 0.0,
+    "pub": "",
+    "note": "",
+    "o25": null,
+    "o35": null,
+    "conf": null,
+    "picks": []
+   },
+   {
+    "fid": "the-odds-api:c02a3d0a40d536e48bb60dffe0e3cd1e",
+    "league": "Portugal Primeira Liga",
+    "country": "Portugal",
+    "home": "Estrela",
+    "away": "Benfica",
+    "kickoff": "22:30",
+    "status": "scheduled",
+    "score": null,
+    "verified": false,
+    "completeness": 0.0,
+    "pub": "",
+    "note": "",
+    "o25": null,
+    "o35": null,
+    "conf": null,
+    "picks": []
+   },
+   {
+    "fid": "the-odds-api:3642cddab8c2e0da43a419cdd01d1db0",
+    "league": "Portugal Primeira Liga",
+    "country": "Portugal",
+    "home": "Rio Ave",
+    "away": "Sp Braga",
+    "kickoff": "22:30",
     "status": "scheduled",
     "score": null,
     "verified": false,

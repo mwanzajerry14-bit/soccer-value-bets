@@ -1,0 +1,4 @@
+date,day_label,kickoff_local,league,country,fixture_id,home,away,market,selection,book,odds,p_model,p_fair,p_raw,edge,ev,confidence,completeness,stake
+2026-11-02,Today,Mon 02 Nov · 21:45 CAT,Italy Serie A,Italy,the-odds-api:2e488800d615a94e5377c195810303c0,atalanta,parma,OU25,under,Betsson,2.48,0.5903917953421476,0.40289352195836037,0.40322580645161293,0.18749827338378722,0.464171652448526,high,90.0,20.0
+2026-11-02,Today,Mon 02 Nov · 19:30 CAT,Italy Serie A,Italy,the-odds-api:66608b64d462d1d3deabe573c8456d86,sassuolo,fiorentina,1X2,home,Coolbet,2.95,0.4174171011567165,0.3350186754055772,0.3389830508474576,0.08239842575113926,0.23138044841231364,high,90.0,20.0
+2026-11-02,Today,Mon 02 Nov · 22:00 CAT,England Premier League,England,the-odds-api:0f552d9c6990c69474f50ff2fb54e9a3,newcastle united,everton,OU25,under,1xBet,2.22,0.4994393845039461,0.4412727326895295,0.4504504504504504,0.0581666518144166,0.10875543359876039,high,90.0,20.0
