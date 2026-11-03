@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-11-03T11:19:48Z",
- "generated_at_cat": "03 Nov 2026, 13:19 CAT",
+ "generated_at_utc": "2026-11-03T12:13:06Z",
+ "generated_at_cat": "03 Nov 2026, 14:13 CAT",
  "lusaka_today": "2026-11-03",
  "min_date": "2026-08-05",
  "max_date": "2026-11-13",
@@ -3413,7 +3413,7 @@
       "sel": "home",
       "odds": 2.4,
       "book": "Coolbet",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -3439,7 +3439,7 @@
       "sel": "home",
       "odds": 2.95,
       "book": "Coolbet",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -3465,7 +3465,7 @@
       "sel": "home",
       "odds": 2.56,
       "book": "1xBet",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -3491,7 +3491,7 @@
       "sel": "under",
       "odds": 2.35,
       "book": "Tipico",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -3517,7 +3517,7 @@
       "sel": "under",
       "odds": 2.22,
       "book": "1xBet",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -3607,9 +3607,9 @@
     "status": "scheduled",
     "score": null,
     "verified": false,
-    "completeness": 0.0,
-    "pub": "",
-    "note": "",
+    "completeness": 55.0,
+    "pub": "failed",
+    "note": "Insufficient data for a reliable prediction (completeness 55% < 60%)",
     "o25": null,
     "o35": null,
     "conf": null,
@@ -3624,10 +3624,10 @@
     "kickoff": "21:00",
     "status": "scheduled",
     "score": null,
-    "verified": false,
-    "completeness": 0.0,
-    "pub": "",
-    "note": "",
+    "verified": true,
+    "completeness": 90.0,
+    "pub": "withheld",
+    "note": "Prediction withheld - model output failed validation: DC/1X2 inconsistency",
     "o25": null,
     "o35": null,
     "conf": null,
@@ -3642,14 +3642,22 @@
     "kickoff": "21:30",
     "status": "scheduled",
     "score": null,
-    "verified": false,
-    "completeness": 0.0,
-    "pub": "",
+    "verified": true,
+    "completeness": 90.0,
+    "pub": "published",
     "note": "",
-    "o25": null,
+    "o25": 0.5213376795843748,
     "o35": null,
-    "conf": null,
-    "picks": []
+    "conf": "high",
+    "picks": [
+     {
+      "market": "OU25",
+      "sel": "under",
+      "odds": 2.4,
+      "book": "LeoVegas (SE)",
+      "status": "pending"
+     }
+    ]
    },
    {
     "fid": "the-odds-api:7ad550e94d58693e8d19f1da1ae1513f",
@@ -3660,10 +3668,10 @@
     "kickoff": "21:45",
     "status": "scheduled",
     "score": null,
-    "verified": false,
-    "completeness": 0.0,
-    "pub": "",
-    "note": "",
+    "verified": true,
+    "completeness": 85.0,
+    "pub": "withheld",
+    "note": "Prediction withheld - model output failed validation: DC/1X2 inconsistency",
     "o25": null,
     "o35": null,
     "conf": null,
@@ -3678,14 +3686,22 @@
     "kickoff": "21:45",
     "status": "scheduled",
     "score": null,
-    "verified": false,
-    "completeness": 0.0,
-    "pub": "",
+    "verified": true,
+    "completeness": 90.0,
+    "pub": "published",
     "note": "",
-    "o25": null,
+    "o25": 0.6245683008459434,
     "o35": null,
-    "conf": null,
-    "picks": []
+    "conf": "high",
+    "picks": [
+     {
+      "market": "1X2",
+      "sel": "away",
+      "odds": 3.51,
+      "book": "1xBet",
+      "status": "pending"
+     }
+    ]
    },
    {
     "fid": "the-odds-api:fa069801a5c9b49143447a1a1d173fd1",
@@ -3696,10 +3712,10 @@
     "kickoff": "21:45",
     "status": "scheduled",
     "score": null,
-    "verified": false,
-    "completeness": 0.0,
-    "pub": "",
-    "note": "",
+    "verified": true,
+    "completeness": 90.0,
+    "pub": "withheld",
+    "note": "Prediction withheld - model output failed validation: DC/1X2 inconsistency",
     "o25": null,
     "o35": null,
     "conf": null,
@@ -3714,10 +3730,10 @@
     "kickoff": "22:00",
     "status": "scheduled",
     "score": null,
-    "verified": false,
-    "completeness": 0.0,
-    "pub": "",
-    "note": "",
+    "verified": true,
+    "completeness": 90.0,
+    "pub": "withheld",
+    "note": "Prediction withheld - model output failed validation: DC/1X2 inconsistency",
     "o25": null,
     "o35": null,
     "conf": null,
@@ -3732,10 +3748,10 @@
     "kickoff": "22:00",
     "status": "scheduled",
     "score": null,
-    "verified": false,
-    "completeness": 0.0,
-    "pub": "",
-    "note": "",
+    "verified": true,
+    "completeness": 90.0,
+    "pub": "withheld",
+    "note": "Prediction withheld - model output failed validation: DC/1X2 inconsistency",
     "o25": null,
     "o35": null,
     "conf": null,
@@ -3750,14 +3766,22 @@
     "kickoff": "22:45",
     "status": "scheduled",
     "score": null,
-    "verified": false,
-    "completeness": 0.0,
-    "pub": "",
+    "verified": true,
+    "completeness": 90.0,
+    "pub": "published",
     "note": "",
-    "o25": null,
+    "o25": 0.43035376323279634,
     "o35": null,
-    "conf": null,
-    "picks": []
+    "conf": "high",
+    "picks": [
+     {
+      "market": "OU25",
+      "sel": "under",
+      "odds": 1.87,
+      "book": "Pinnacle",
+      "status": "pending"
+     }
+    ]
    }
   ],
   "2026-11-07": [
