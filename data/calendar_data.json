@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-11-04T12:25:27Z",
- "generated_at_cat": "04 Nov 2026, 14:25 CAT",
+ "generated_at_utc": "2026-11-04T21:29:18Z",
+ "generated_at_cat": "04 Nov 2026, 23:29 CAT",
  "lusaka_today": "2026-11-04",
  "min_date": "2026-08-06",
  "max_date": "2026-11-14",
@@ -3584,7 +3584,7 @@
     "home": "Kortrijk",
     "away": "Mechelen",
     "kickoff": "21:30",
-    "status": "scheduled",
+    "status": "completed",
     "score": null,
     "verified": true,
     "completeness": 85.0,
