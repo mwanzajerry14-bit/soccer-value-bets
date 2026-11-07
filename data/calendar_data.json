@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-11-07T10:40:29Z",
- "generated_at_cat": "07 Nov 2026, 12:40 CAT",
+ "generated_at_utc": "2026-11-07T11:16:35Z",
+ "generated_at_cat": "07 Nov 2026, 13:16 CAT",
  "lusaka_today": "2026-11-07",
  "min_date": "2026-08-09",
  "max_date": "2026-11-17",
@@ -3823,7 +3823,7 @@
     "completeness": 90.0,
     "pub": "published",
     "note": "",
-    "o25": 0.40156185695857327,
+    "o25": 0.40157041958691053,
     "o35": null,
     "conf": "high",
     "picks": [
@@ -3913,7 +3913,15 @@
     "o25": 0.447059961539842,
     "o35": null,
     "conf": "high",
-    "picks": []
+    "picks": [
+     {
+      "market": "OU25",
+      "sel": "under",
+      "odds": 2.11,
+      "book": "Pinnacle",
+      "status": "pending"
+     }
+    ]
    },
    {
     "fid": "the-odds-api:3ef62ef56758041178c5280225fe5db7",
@@ -4056,7 +4064,7 @@
     "completeness": 90.0,
     "pub": "published",
     "note": "",
-    "o25": 0.34693993891931396,
+    "o25": 0.3469415956149864,
     "o35": null,
     "conf": "high",
     "picks": [
@@ -4096,7 +4104,7 @@
     "completeness": 90.0,
     "pub": "published",
     "note": "",
-    "o25": 0.46842897841337466,
+    "o25": 0.46843583247396414,
     "o35": null,
     "conf": "high",
     "picks": [
@@ -4205,7 +4213,15 @@
     "o25": 0.6040333235030141,
     "o35": null,
     "conf": "high",
-    "picks": []
+    "picks": [
+     {
+      "market": "1X2",
+      "sel": "away",
+      "odds": 3.6,
+      "book": "Unibet (NL)",
+      "status": "pending"
+     }
+    ]
    },
    {
     "fid": "the-odds-api:406c4abcb4384570eada7fffa729be9d",
@@ -4379,7 +4395,7 @@
     "completeness": 90.0,
     "pub": "published",
     "note": "",
-    "o25": 0.4448609189928886,
+    "o25": 0.4448637741479823,
     "o35": null,
     "conf": "high",
     "picks": [
@@ -4513,7 +4529,7 @@
     "completeness": 90.0,
     "pub": "published",
     "note": "",
-    "o25": 0.7373312130051353,
+    "o25": 0.7373325092304506,
     "o35": null,
     "conf": "high",
     "picks": [
@@ -4522,6 +4538,13 @@
       "sel": "home",
       "odds": 1.35,
       "book": "1xBet",
+      "status": "pending"
+     },
+     {
+      "market": "OU25",
+      "sel": "over",
+      "odds": 1.4,
+      "book": "Betsson",
       "status": "pending"
      }
     ]
@@ -4649,7 +4672,7 @@
     "completeness": 90.0,
     "pub": "published",
     "note": "",
-    "o25": 0.5904389642701119,
+    "o25": 0.5904467265198157,
     "o35": null,
     "conf": "high",
     "picks": [
@@ -4799,7 +4822,7 @@
     "completeness": 90.0,
     "pub": "published",
     "note": "",
-    "o25": 0.5553086289987879,
+    "o25": 0.555314625395093,
     "o35": null,
     "conf": "high",
     "picks": [
@@ -5096,7 +5119,7 @@
     "completeness": 90.0,
     "pub": "published",
     "note": "",
-    "o25": 0.2386843769493297,
+    "o25": 0.2386850059185082,
     "o35": null,
     "conf": "high",
     "picks": [
@@ -5173,7 +5196,7 @@
     "completeness": 90.0,
     "pub": "published",
     "note": "",
-    "o25": 0.88151275508509,
+    "o25": 0.8815238132235216,
     "o35": null,
     "conf": "high",
     "picks": [
