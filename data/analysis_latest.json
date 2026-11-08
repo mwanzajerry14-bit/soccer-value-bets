@@ -1,0 +1,40 @@
+{
+ "run_id": "analysis_2026-11-08_194742",
+ "run_date": "2026-11-08",
+ "generated_utc": "2026-11-08T19:47:42Z",
+ "version": "site-totals-1.0",
+ "window": [
+  "2026-11-08",
+  "2026-11-09",
+  "2026-11-10",
+  "2026-11-11"
+ ],
+ "counts": {
+  "fixtures_discovered": 34,
+  "analysed": 3,
+  "excluded": 31,
+  "ou25_candidates": 3,
+  "ou55_candidates": 3,
+  "snapshots": {
+   "inserted": 6
+  },
+  "settled": 0,
+  "unresolved": 0
+ },
+ "notes": [
+  "Tracked-leagues-only mode: the page does not claim a worldwide 100+ match scan.",
+  "No paid worldwide provider is configured; team news is shown as unavailable rather than invented."
+ ],
+ "metrics": {
+  "OU25": {
+   "n": 0,
+   "meaningful": false,
+   "note": "no settled analysis snapshots yet"
+  },
+  "OU55": {
+   "n": 0,
+   "meaningful": false,
+   "note": "no settled analysis snapshots yet"
+  }
+ }
+}
