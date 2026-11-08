@@ -398,6 +398,9 @@ def test_calendar_today_and_window_from_server_utc():
     import pandas as _pd
     with db.conn() as c:
         f = fx(pid="w1", days_ahead=1).to_row()
+        # Synthetic acceptance fixture: keep date and timestamp consistent
+        # rather than depending on the machine's current calendar date.
+        f["date"] = "2026-10-26"
         f["kickoff_utc"] = "2026-10-26T16:30:00Z"
         db.upsert_fixture(c, f)
     data = build_data(today=date(2026, 10, 25))

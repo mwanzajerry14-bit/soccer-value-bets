@@ -445,3 +445,33 @@ four 6-hourly refreshes x7). Changes now in force:
 Net effect: 500 credits stretch to ~12+ days of full operation monthly; when
 exhausted, the run degrades gracefully (fixtures+predictions continue, value
 bets pause with a visible warning) until the 1st-of-month refill, 02:00 CAT.
+
+
+## Tracked-league totals analysis — `analysis.html`
+
+The daily workflow now has an **additive** Over 2.5 / Over 5.5 analysis stage,
+published at `analysis.html` after the main report has completed. It never
+edits the existing prediction or value-bet tables.
+
+The current implementation analyses only the leagues and fixtures already
+tracked by this site. It uses recorded football-data.co.uk results before each
+kickoff plus the site's fitted Dixon-Coles goals model. Over 2.5 and Over 5.5
+come from the same scoreline distribution but have separate probability and
+evidence gates; an Over 2.5 view never automatically promotes Over 5.5.
+
+* A separate `analysis_snapshots` table stores pre-kickoff forecasts. Forecast
+  values are immutable; a later scheduled refresh is a new revision and the
+  earlier snapshot is retained.
+* Performance uses only settled, stored pre-kickoff snapshots. Missing results
+  remain unresolved and no accuracy/calibration claim is made on a small
+  sample. `Good` / `Strong` labels are unavailable until 300 settled snapshots
+  meet the calibration gate.
+* Real O2.5 odds, edge and EV are shown only when the main pipeline recorded a
+  fresh two-sided bookmaker quote. O5.5 is correctly shown without EV where no
+  real O5.5 price exists.
+* Team news and a second worldwide source are visibly marked unavailable in
+  this free, tracked-leagues-only scope. The page does **not** claim a
+  worldwide 100+ match scan.
+
+A truly worldwide scan would require a paid current-season fixture provider
+such as API-Football. It is deliberately not enabled by this implementation.

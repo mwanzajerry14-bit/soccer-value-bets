@@ -93,6 +93,7 @@ details{margin:14px 0}
 </div>
 <p><button class="btn" onclick="hardReload()">↻ Refresh</button>
 &nbsp;<a class="btn" href="calendar.html" style="background:#2e7d32">📅 Match calendar</a>
+&nbsp;<a class="btn" href="analysis.html" style="background:#6a1b9a">🔬 Totals analysis (O2.5 / O5.5)</a>
 &nbsp;<a class="btn" href="results.html" style="background:#00695c">✅ Results &amp; calibration</a>
 &nbsp;<a class="btn" href="admin.html" style="background:#6d4c41">🛠 Admin</a></p>
 <div id="freshbox"></div>
