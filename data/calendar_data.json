@@ -1,6 +1,6 @@
 {
- "generated_at_utc": "2026-11-09T12:06:04Z",
- "generated_at_cat": "09 Nov 2026, 14:06 CAT",
+ "generated_at_utc": "2026-11-09T13:14:20Z",
+ "generated_at_cat": "09 Nov 2026, 15:14 CAT",
  "lusaka_today": "2026-11-09",
  "min_date": "2026-08-11",
  "max_date": "2026-11-19",
@@ -3655,7 +3655,7 @@
       "sel": "under",
       "odds": 2.4,
       "book": "LeoVegas (SE)",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -3699,14 +3699,14 @@
       "sel": "away",
       "odds": 3.51,
       "book": "1xBet",
-      "status": "pending"
+      "status": "lost"
      },
      {
       "market": "OU25",
       "sel": "over",
       "odds": 1.74,
       "book": "1xBet",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -3786,7 +3786,7 @@
       "sel": "under",
       "odds": 1.87,
       "book": "Pinnacle",
-      "status": "pending"
+      "status": "won"
      }
     ]
    }
@@ -3832,14 +3832,14 @@
       "sel": "home",
       "odds": 2.69,
       "book": "Pinnacle",
-      "status": "pending"
+      "status": "won"
      },
      {
       "market": "OU25",
       "sel": "under",
       "odds": 1.95,
       "book": "LeoVegas (SE)",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -3919,7 +3919,7 @@
       "sel": "under",
       "odds": 2.11,
       "book": "Pinnacle",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -3963,14 +3963,14 @@
       "sel": "over",
       "odds": 1.22,
       "book": "Betsson",
-      "status": "pending"
+      "status": "won"
      },
      {
       "market": "1X2",
       "sel": "away",
       "odds": 1.41,
       "book": "Unibet (SE)",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -3996,14 +3996,14 @@
       "sel": "under",
       "odds": 2.8,
       "book": "William Hill",
-      "status": "pending"
+      "status": "lost"
      },
      {
       "market": "1X2",
       "sel": "home",
       "odds": 3.15,
       "book": "BetOnline.ag",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -4047,7 +4047,7 @@
       "sel": "home",
       "odds": 2.92,
       "book": "1xBet",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -4073,21 +4073,21 @@
       "sel": "under",
       "odds": 2.69,
       "book": "Betsson",
-      "status": "pending"
+      "status": "won"
      },
      {
       "market": "1X2",
       "sel": "draw",
       "odds": 8.7,
       "book": "Coolbet",
-      "status": "pending"
+      "status": "lost"
      },
      {
       "market": "1X2",
       "sel": "away",
       "odds": 21.0,
       "book": "Unibet (SE)",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -4113,7 +4113,7 @@
       "sel": "under",
       "odds": 2.32,
       "book": "1xBet",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -4157,7 +4157,7 @@
       "sel": "away",
       "odds": 3.45,
       "book": "Pinnacle",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -4219,7 +4219,7 @@
       "sel": "away",
       "odds": 3.6,
       "book": "Unibet (NL)",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -4299,14 +4299,14 @@
       "sel": "under",
       "odds": 1.79,
       "book": "1xBet",
-      "status": "pending"
+      "status": "lost"
      },
      {
       "market": "1X2",
       "sel": "home",
       "odds": 4.75,
       "book": "Coolbet",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -4404,7 +4404,7 @@
       "sel": "home",
       "odds": 3.67,
       "book": "BetOnline.ag",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -4538,14 +4538,14 @@
       "sel": "home",
       "odds": 1.35,
       "book": "1xBet",
-      "status": "pending"
+      "status": "won"
      },
      {
       "market": "OU25",
       "sel": "over",
       "odds": 1.4,
       "book": "Betsson",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -4681,7 +4681,7 @@
       "sel": "under",
       "odds": 2.94,
       "book": "Nordic Bet",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -4707,7 +4707,7 @@
       "sel": "under",
       "odds": 2.16,
       "book": "1xBet",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -4733,7 +4733,7 @@
       "sel": "home",
       "odds": 1.52,
       "book": "1xBet",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -4831,14 +4831,14 @@
       "sel": "under",
       "odds": 2.51,
       "book": "Betsson",
-      "status": "pending"
+      "status": "lost"
      },
      {
       "market": "1X2",
       "sel": "home",
       "odds": 5.8,
       "book": "Coolbet",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -4900,14 +4900,14 @@
       "sel": "under",
       "odds": 2.43,
       "book": "Unibet (SE)",
-      "status": "pending"
+      "status": "lost"
      },
      {
       "market": "1X2",
       "sel": "away",
       "odds": 3.45,
       "book": "LeoVegas (SE)",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -4951,14 +4951,14 @@
       "sel": "over",
       "odds": 1.63,
       "book": "1xBet",
-      "status": "pending"
+      "status": "lost"
      },
      {
       "market": "1X2",
       "sel": "away",
       "odds": 2.1,
       "book": "1xBet",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -5128,7 +5128,7 @@
       "sel": "under",
       "odds": 1.52,
       "book": "Tipico",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -5172,14 +5172,14 @@
       "sel": "away",
       "odds": 5.6,
       "book": "Unibet (NL)",
-      "status": "pending"
+      "status": "lost"
      },
      {
       "market": "OU25",
       "sel": "under",
       "odds": 2.94,
       "book": "Nordic Bet",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -5205,7 +5205,7 @@
       "sel": "over",
       "odds": 1.26,
       "book": "Nordic Bet",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -5249,7 +5249,7 @@
       "sel": "under",
       "odds": 2.21,
       "book": "1xBet",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },
@@ -5275,7 +5275,7 @@
       "sel": "away",
       "odds": 2.55,
       "book": "LeoVegas (SE)",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -5571,7 +5571,7 @@
       "sel": "home",
       "odds": 2.21,
       "book": "Codere (IT)",
-      "status": "pending"
+      "status": "lost"
      }
     ]
    },
@@ -5633,14 +5633,14 @@
       "sel": "away",
       "odds": 1.25,
       "book": "GTbets",
-      "status": "pending"
+      "status": "won"
      },
      {
       "market": "OU25",
       "sel": "over",
       "odds": 1.41,
       "book": "Betsson",
-      "status": "pending"
+      "status": "won"
      }
     ]
    },

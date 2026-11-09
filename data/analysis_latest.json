@@ -1,24 +1,22 @@
 {
- "run_id": "analysis_2026-11-08_194742",
- "run_date": "2026-11-08",
- "generated_utc": "2026-11-08T19:47:42Z",
+ "run_id": "analysis_2026-11-09_131419",
+ "run_date": "2026-11-09",
+ "generated_utc": "2026-11-09T13:14:19Z",
  "version": "site-totals-1.0",
  "window": [
-  "2026-11-08",
   "2026-11-09",
   "2026-11-10",
-  "2026-11-11"
+  "2026-11-11",
+  "2026-11-12"
  ],
  "counts": {
-  "fixtures_discovered": 34,
-  "analysed": 3,
-  "excluded": 31,
-  "ou25_candidates": 3,
-  "ou55_candidates": 3,
-  "snapshots": {
-   "inserted": 6
-  },
-  "settled": 0,
+  "fixtures_discovered": 0,
+  "analysed": 0,
+  "excluded": 0,
+  "ou25_candidates": 0,
+  "ou55_candidates": 0,
+  "snapshots": {},
+  "settled": 6,
   "unresolved": 0
  },
  "notes": [
@@ -27,14 +25,20 @@
  ],
  "metrics": {
   "OU25": {
-   "n": 0,
+   "n": 3,
+   "brier": 0.1782,
+   "ece": 0.1734,
    "meaningful": false,
-   "note": "no settled analysis snapshots yet"
+   "calibrated": false,
+   "note": "metrics are not statistically meaningful until at least 30 settled snapshots"
   },
   "OU55": {
-   "n": 0,
+   "n": 3,
+   "brier": 0.0183,
+   "ece": 0.1302,
    "meaningful": false,
-   "note": "no settled analysis snapshots yet"
+   "calibrated": false,
+   "note": "metrics are not statistically meaningful until at least 30 settled snapshots"
   }
  }
 }
