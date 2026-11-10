@@ -1,13 +1,13 @@
 {
- "run_id": "analysis_2026-11-09_131419",
- "run_date": "2026-11-09",
- "generated_utc": "2026-11-09T13:14:19Z",
+ "run_id": "analysis_2026-11-10_125412",
+ "run_date": "2026-11-10",
+ "generated_utc": "2026-11-10T12:54:12Z",
  "version": "site-totals-1.0",
  "window": [
-  "2026-11-09",
   "2026-11-10",
   "2026-11-11",
-  "2026-11-12"
+  "2026-11-12",
+  "2026-11-13"
  ],
  "counts": {
   "fixtures_discovered": 0,
@@ -16,7 +16,7 @@
   "ou25_candidates": 0,
   "ou55_candidates": 0,
   "snapshots": {},
-  "settled": 6,
+  "settled": 0,
   "unresolved": 0
  },
  "notes": [
