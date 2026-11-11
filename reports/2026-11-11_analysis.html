@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Football totals analysis</title><style>
+body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:1100px;margin:24px auto;padding:0 16px;color:#1a1a2e}
+h1{font-size:22px}h2{font-size:17px;margin-top:28px;border-bottom:2px solid #3949ab;padding-bottom:4px}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0}
+th{background:#3949ab;color:#fff;padding:6px 8px;text-align:left}
+td{border-bottom:1px solid #e3e3ee;padding:5px 8px}
+tr.v td{background:#e8f5e9}
+.badge{background:#2e7d32;color:#fff;border-radius:4px;padding:1px 6px;font-size:11px}
+.chip{display:inline-block;background:#eef0fb;border:1px solid #cfd5f2;border-radius:10px;padding:1px 8px;font-size:11px;margin-right:4px}
+.fid{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;color:#777}
+.warn{background:#fff8e1;border:1px solid #ffe082;padding:10px 14px;border-radius:6px;font-size:13px;margin:12px 0}
+.demo{background:#ffebee;border:1px solid #ef5350;padding:12px;border-radius:6px;font-weight:600}
+.summary{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0}
+.card{background:#f4f6ff;border:1px solid #dfe3f5;border-radius:8px;padding:10px 16px;font-size:13px}
+.card b{font-size:18px;display:block}
+.small{font-size:12px;color:#555}
+td.r,th.r{text-align:right}
+.dayhdr{background:#dfe3f5;border-radius:6px;padding:4px 10px;font-weight:700;font-size:13px;margin:18px 0 6px}
+.fx{border-left:3px solid #3949ab;padding-left:10px;margin-bottom:14px}
+.fx.w-l{border-left-color:#ef6c00}.fx.f-l{border-left-color:#c62828}.fx.b-l{border-left-color:#9e9e9e}
+.btn{display:inline-block;background:#3949ab;color:#fff!important;padding:6px 14px;border-radius:6px;text-decoration:none;font-size:13px;border:0;cursor:pointer}
+.more{margin:8px 0 18px}
+select,input{padding:4px 8px;font-size:13px}
+
+.scroll{overflow-x:auto}.cards{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.card{border:1px solid #d0d7de;border-radius:8px;padding:8px 12px;min-width:125px}.card b{display:block;font-size:1.35em}.pill{display:inline-block;border:1px solid #777;border-radius:12px;padding:1px 7px;font-size:11px}.warn{background:#fff8e1;border-left:4px solid #f0ad00;padding:9px 12px}.detail{margin:8px 0 4px;padding:4px 10px;background:#f8fafc;border:1px solid #e3e8ef}.small{font-size:12px;color:#444}details{border:1px solid #d0d7de;border-radius:7px;padding:7px 10px;margin:9px 0}summary{cursor:pointer}
+</style></head><body>
+<p class="small"><a href="index.html">← Home</a> · <a href="calendar.html">Calendar</a> · <a href="results.html">Results</a></p>
+<h1>Tracked-league totals analysis — Over 2.5 / Over 5.5</h1>
+<p><b>Window:</b> 2026-11-11 → 2026-11-14 · <b>Generated:</b> 2026-11-11T12:03:18Z UTC · model site-totals-1.0</p>
+<div class="cards"><div class="card"><b>0</b>Fixtures found</div><div class="card"><b>0</b>Analysed</div><div class="card"><b>0</b>Excluded</div><div class="card"><b>0</b>O2.5 candidates</div><div class="card"><b>0</b>O5.5 candidates</div><div class="card"><b>0</b>Settled since last run</div></div>
+<div class="warn"><b>Scope:</b> this is an additive, independent analysis of the fixtures already tracked by this site — not a claim of a worldwide 100+ match scan. Probabilities are estimates, not guarantees. No value or EV is shown unless a real current bookmaker price was recorded.</div>
+<h2>Top Over 2.5 statistical candidates</h2><p class="warn">No qualifying Over 2.5 statistical candidates today. The system does not pad rankings.</p>
+<h2>Top Over 5.5 statistical candidates</h2><p class="small">Over 5.5 means six or more goals. It has its own probability and structural evidence gate; it is never inferred from an O2.5 recommendation.</p><p class="warn">No qualifying Over 5.5 statistical candidates today. The system does not pad rankings.</p>
+<h2>All analysed matches</h2><p class="warn">No tracked fixture passed the pre-kickoff analysis gates today.</p>
+<h2>Excluded / insufficient-data matches</h2><p>Nothing was excluded.</p>
+<h2>Performance and calibration</h2><p class="small">Only immutable snapshots stored before kickoff are evaluated. Results without a trustworthy match are left unresolved; they are never guessed.</p><ul><li><b>Over 2.5:</b> 3 settled · Brier 0.1782 · ECE 0.1734. metrics are not statistically meaningful until at least 30 settled snapshots</li><li><b>Over 5.5:</b> 3 settled · Brier 0.0183 · ECE 0.1302. metrics are not statistically meaningful until at least 30 settled snapshots</li></ul>
+<h2>Data limitations</h2><ul><li>Tracked-leagues-only mode: the page does not claim a worldwide 100+ match scan.</li><li>No paid worldwide provider is configured; team news is shown as unavailable rather than invented.</li></ul>
+</body></html>
