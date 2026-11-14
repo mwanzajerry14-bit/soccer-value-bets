@@ -1,14 +1,14 @@
 {
- "generated_at_utc": "2026-11-13T21:36:43Z",
- "generated_at_cat": "13 Nov 2026, 23:36 CAT",
- "lusaka_today": "2026-11-13",
- "min_date": "2026-08-15",
- "max_date": "2026-11-23",
+ "generated_at_utc": "2026-11-14T10:53:51Z",
+ "generated_at_cat": "14 Nov 2026, 12:53 CAT",
+ "lusaka_today": "2026-11-14",
+ "min_date": "2026-08-16",
+ "max_date": "2026-11-24",
  "window4": [
-  "2026-11-13",
   "2026-11-14",
   "2026-11-15",
-  "2026-11-16"
+  "2026-11-16",
+  "2026-11-17"
  ],
  "days": {
   "2026-10-24": [
@@ -6522,6 +6522,26 @@
     "country": "Spain",
     "home": "Levante",
     "away": "Elche",
+    "kickoff": "22:00",
+    "status": "scheduled",
+    "score": null,
+    "verified": false,
+    "completeness": 0.0,
+    "pub": "",
+    "note": "",
+    "o25": null,
+    "o35": null,
+    "conf": null,
+    "picks": []
+   }
+  ],
+  "2026-11-24": [
+   {
+    "fid": "the-odds-api:6096027801dd71f0e41795f1e5380261",
+    "league": "Scotland Premiership",
+    "country": "Scotland",
+    "home": "Rangers",
+    "away": "Aberdeen",
     "kickoff": "22:00",
     "status": "scheduled",
     "score": null,
