@@ -1,13 +1,13 @@
 {
- "run_id": "analysis_2026-11-23_151029",
- "run_date": "2026-11-23",
- "generated_utc": "2026-11-23T15:10:29Z",
+ "run_id": "analysis_2026-11-24_150825",
+ "run_date": "2026-11-24",
+ "generated_utc": "2026-11-24T15:08:25Z",
  "version": "site-totals-1.0",
  "window": [
-  "2026-11-23",
   "2026-11-24",
   "2026-11-25",
-  "2026-11-26"
+  "2026-11-26",
+  "2026-11-27"
  ],
  "counts": {
   "fixtures_discovered": 0,
